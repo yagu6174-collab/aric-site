@@ -10,6 +10,7 @@ export const zhTW = {
   },
   home: {
     heroTitle: "越害怕風險，越需要保險",
+    heroLines: ["越害怕風險", "越需要保險"],
     heroSubtitle: "專業理財顧問 / 獨立觀點分享者",
     ctaInsights: "探索理財見解",
     ctaAbout: "關於我 & 履歷",

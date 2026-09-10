@@ -3,6 +3,7 @@ import { LatestInsights } from "@/components/home/LatestInsights";
 import { PhilosophyBento } from "@/components/home/PhilosophyBento";
 import { PhotographyBanner } from "@/components/home/PhotographyBanner";
 import { StudioDirectory } from "@/components/home/StudioDirectory";
+import { HomeCursor } from "@/components/motion/HomeCursor";
 import { Container } from "@/components/ui/Container";
 import { getInsights } from "@/lib/content";
 
@@ -12,12 +13,17 @@ export default async function HomePage() {
   const insights = await getInsights();
 
   return (
-    <Container>
+    <>
+      <HomeCursor />
       <Hero />
-      <StudioDirectory />
-      <PhilosophyBento />
-      <LatestInsights items={insights} />
-      <PhotographyBanner />
-    </Container>
+      <div className="home-rest">
+        <Container>
+          <StudioDirectory />
+          <PhilosophyBento />
+          <LatestInsights items={insights} />
+          <PhotographyBanner />
+        </Container>
+      </div>
+    </>
   );
 }

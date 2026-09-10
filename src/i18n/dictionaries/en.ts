@@ -10,6 +10,7 @@ export const en = {
   },
   home: {
     heroTitle: "The more you fear risk, the more you need protection",
+    heroLines: ["The more you fear risk,", "the more you need protection."],
     heroSubtitle: "Wealth advisor / Independent writer",
     ctaInsights: "Explore insights",
     ctaAbout: "About & resume",

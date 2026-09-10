@@ -10,6 +10,7 @@ export const zhCN = {
   },
   home: {
     heroTitle: "越害怕风险，越需要保险",
+    heroLines: ["越害怕风险", "越需要保险"],
     heroSubtitle: "专业理财顾问 / 独立观点分享者",
     ctaInsights: "探索理财见解",
     ctaAbout: "关于我 & 履历",
