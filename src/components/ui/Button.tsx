@@ -15,6 +15,7 @@ export function Button({
   className,
   type = "button",
   onClick,
+  disabled,
 }: {
   href?: string;
   children: React.ReactNode;
@@ -22,10 +23,12 @@ export function Button({
   className?: string;
   type?: "button" | "submit";
   onClick?: () => void;
+  disabled?: boolean;
 }) {
   const cls = cn(
     "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm tracking-wide transition",
     styles[variant],
+    disabled && "cursor-not-allowed opacity-50",
     className,
   );
 
@@ -38,7 +41,7 @@ export function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} className={cls}>
+    <button type={type} onClick={onClick} className={cls} disabled={disabled}>
       {children}
     </button>
   );

@@ -1,10 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import type { Photo } from "@/types/photo";
+
+async function readError(res: Response) {
+  try {
+    const data = (await res.json()) as { error?: string };
+    return data.error || "上传失败";
+  } catch {
+    return "上传失败";
+  }
+}
 
 export default function AdminPhotographyPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -12,6 +21,8 @@ export default function AdminPhotographyPage() {
   const [caption, setCaption] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   async function load() {
@@ -32,19 +43,32 @@ export default function AdminPhotographyPage() {
   }, [router]);
 
   async function upload() {
-    if (!file) return;
+    if (!file) {
+      setMessage("请先点击「选择照片」选一张图。");
+      return;
+    }
+    if (file.size > 4.5 * 1024 * 1024) {
+      setMessage("照片超过 4MB，请压缩后再上传。");
+      return;
+    }
+    setBusy(true);
+    setMessage("正在上传…");
     const form = new FormData();
     form.append("file", file);
     form.append("album", album);
     form.append("caption", caption);
     const res = await fetch("/api/photography", { method: "POST", body: form });
-    setMessage(res.ok ? "已上传" : "上传失败，请先登录");
-    if (res.ok) {
-      setAlbum("");
-      setCaption("");
-      setFile(null);
-      await load();
+    setBusy(false);
+    if (!res.ok) {
+      setMessage(await readError(res));
+      return;
     }
+    setMessage("已上传，可到前台「摄影自留地」查看。");
+    setAlbum("");
+    setCaption("");
+    setFile(null);
+    if (inputRef.current) inputRef.current.value = "";
+    await load();
   }
 
   async function remove(id: string) {
@@ -69,12 +93,27 @@ export default function AdminPhotographyPage() {
           placeholder="光影旁白"
           className="w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2"
         />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        />
-        <Button onClick={upload}>上传照片</Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="sr-only"
+            onChange={(e) => {
+              setFile(e.target.files?.[0] ?? null);
+              setMessage("");
+            }}
+          />
+          <Button variant="ghost" onClick={() => inputRef.current?.click()}>
+            选择照片
+          </Button>
+          <p className="text-sm text-[var(--muted)]">
+            {file ? file.name : "还没有选择文件"}
+          </p>
+        </div>
+        <Button onClick={upload} disabled={busy}>
+          {busy ? "上传中…" : "上传照片"}
+        </Button>
         {message ? <p className="text-sm text-[var(--muted)]">{message}</p> : null}
       </Card>
       <div className="grid gap-3">
