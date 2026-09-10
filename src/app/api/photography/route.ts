@@ -2,7 +2,7 @@ import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
 import { hasBlobToken } from "@/lib/blob";
-import { getPhotos, saveLocalUpload, savePhotos } from "@/lib/content";
+import { getPhotos, saveLocalUpload, savePhotoRecord, deletePhoto } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -51,14 +51,13 @@ export async function POST(request: Request) {
       ? (await put(pathname, file, { access: "public", addRandomSuffix: true })).url
       : await saveLocalUpload(file);
 
-    const photos = await getPhotos();
     const next = {
       id: crypto.randomUUID(),
       url,
       album,
       caption,
     };
-    await savePhotos([next, ...photos]);
+    await savePhotoRecord(next);
     return NextResponse.json(next);
   } catch (error) {
     const message = error instanceof Error ? error.message : "上传失败";
@@ -73,7 +72,6 @@ export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
-  const photos = await getPhotos();
-  await savePhotos(photos.filter((item) => item.id !== id));
+  await deletePhoto(id);
   return NextResponse.json({ ok: true });
 }
