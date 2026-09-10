@@ -6,6 +6,8 @@ import { getPhotos, saveLocalUpload, savePhotoRecord, deletePhoto } from "@/lib/
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 const MAX_BYTES = 4.5 * 1024 * 1024;
 
@@ -22,7 +24,12 @@ function safeName(file: File) {
 }
 
 export async function GET() {
-  return NextResponse.json(await getPhotos());
+  const photos = await getPhotos();
+  return NextResponse.json(photos, {
+    headers: {
+      "Cache-Control": "no-store, max-age=0",
+    },
+  });
 }
 
 export async function POST(request: Request) {
