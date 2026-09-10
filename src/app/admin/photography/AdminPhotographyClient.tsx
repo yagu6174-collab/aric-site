@@ -145,6 +145,41 @@ export function AdminPhotographyClient({
 
   return (
     <div className="space-y-6">
+      <div className="space-y-3">
+        <h2 className="font-serif text-xl">前台正在展示 {photos.length} 张</h2>
+        <p className="text-sm text-[var(--muted)]">
+          下面这些就是访客在「摄影自留地」看到的图。点删除后，前台会马上拿掉。
+        </p>
+        {photos.length === 0 ? (
+          <p className="text-sm text-[var(--muted)]">还没有已发布的照片。</p>
+        ) : (
+          <div className="grid gap-3">
+            {photos.map((photo) => (
+              <Card
+                key={photo.id}
+                className="flex items-center justify-between gap-3"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <img
+                    src={photo.url}
+                    alt={photo.caption || photo.album}
+                    className="h-20 w-20 shrink-0 object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-serif">{photo.album}</p>
+                    <p className="truncate text-sm text-[var(--muted)]">
+                      {photo.caption || "无旁白"}
+                    </p>
+                  </div>
+                </div>
+                <Button variant="ghost" onClick={() => remove(photo.id)}>
+                  删除
+                </Button>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
       <Card className="space-y-3">
         <h1 className="font-serif text-2xl">上传照片</h1>
         <p className="text-sm text-[var(--muted)]">
@@ -205,38 +240,6 @@ export function AdminPhotographyClient({
         </Button>
         {message ? <p className="text-sm text-[var(--muted)]">{message}</p> : null}
       </Card>
-      <div className="space-y-3">
-        <h2 className="font-serif text-xl">已发布 {photos.length} 张</h2>
-        {photos.length === 0 ? (
-          <p className="text-sm text-[var(--muted)]">还没有已发布的照片。</p>
-        ) : (
-          <div className="grid gap-3">
-            {photos.map((photo) => (
-              <Card
-                key={photo.id}
-                className="flex items-center justify-between gap-3"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <img
-                    src={photo.url}
-                    alt={photo.caption || photo.album}
-                    className="h-20 w-20 shrink-0 object-cover"
-                  />
-                  <div className="min-w-0">
-                    <p className="font-serif">{photo.album}</p>
-                    <p className="truncate text-sm text-[var(--muted)]">
-                      {photo.caption || "无旁白"}
-                    </p>
-                  </div>
-                </div>
-                <Button variant="ghost" onClick={() => remove(photo.id)}>
-                  删除
-                </Button>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
