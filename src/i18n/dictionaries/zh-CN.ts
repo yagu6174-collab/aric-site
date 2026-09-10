@@ -56,8 +56,11 @@ export const zhCN = {
   },
   photography: {
     title: "摄影自留地",
+    intro: "近些年拍下的一些片段，仍在延续。",
     empty: "还没有照片。登录后台即可上传。",
     close: "关闭",
+    count: "张",
+    untitled: "未分组",
   },
   contact: {
     title: "联系",

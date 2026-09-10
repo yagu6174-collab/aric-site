@@ -56,8 +56,11 @@ export const en = {
   },
   photography: {
     title: "Photography",
+    intro: "Fragments from recent years, still unfolding.",
     empty: "No photographs yet. Sign in to the studio desk to upload.",
     close: "Close",
+    count: "images",
+    untitled: "Ungrouped",
   },
   contact: {
     title: "Contact",

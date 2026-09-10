@@ -81,6 +81,9 @@ export default function AdminPhotographyPage() {
     <div className="space-y-6">
       <Card className="space-y-3">
         <h1 className="font-serif text-2xl">上传照片</h1>
+        <p className="text-sm text-[var(--muted)]">
+          影集名称会成为前台的分组标题，例如「2026」或「宁波」。
+        </p>
         <input
           value={album}
           onChange={(e) => setAlbum(e.target.value)}

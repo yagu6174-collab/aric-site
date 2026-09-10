@@ -56,8 +56,11 @@ export const zhTW = {
   },
   photography: {
     title: "攝影自留地",
+    intro: "近些年拍下的一些片段，仍在延續。",
     empty: "還沒有照片。登入後台即可上傳。",
     close: "關閉",
+    count: "張",
+    untitled: "未分組",
   },
   contact: {
     title: "聯繫",
