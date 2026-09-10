@@ -30,12 +30,13 @@ export function WeChatCard({ site }: { site: SiteProfile }) {
           {copied ? dict.contact.copied : dict.contact.copy}
         </Button>
       </div>
-      <div className="relative mx-auto mt-8 h-48 w-48 overflow-hidden rounded-xl border border-[var(--line)]">
+      <div className="mx-auto mt-8 w-full max-w-xs overflow-hidden rounded-xl border border-[var(--line)] bg-white">
         <Image
-          src="/placeholders/wechat-qr.svg"
+          src="/placeholders/wechat-qr.jpg"
           alt={dict.contact.qrAlt}
-          fill
-          className="object-contain p-3"
+          width={800}
+          height={1000}
+          className="h-auto w-full"
         />
       </div>
       <p className="mt-6 text-sm leading-relaxed text-[var(--muted)]">

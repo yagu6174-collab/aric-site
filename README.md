@@ -64,5 +64,5 @@ Production / Preview / Development 都勾上。改完变量后 **Redeploy** 一�
 ## 上线前请替换的占位
 
 - `content/site.json`：微信号、邮箱、城市
-- `public/placeholders/wechat-qr.svg`：真实微信二维码
+- `public/placeholders/wechat-qr.jpg`：微信二维码
 - `content/about.json`：学历与履历
