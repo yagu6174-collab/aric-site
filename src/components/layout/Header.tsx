@@ -26,7 +26,7 @@ export function Header() {
   if (pathname.startsWith("/admin")) return null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--line)] glass">
+    <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--bg)]/95 backdrop-blur">
       <Container className="flex items-center justify-between gap-4 py-3">
         <Link href="/" className="shrink-0 font-serif text-lg tracking-wide">
           {dict.name}
