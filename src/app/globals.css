@@ -60,5 +60,14 @@ body {
 }
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   background-color: var(--bg);
+  isolation: isolate;
+}
+
+.site-main {
+  position: relative;
+  z-index: 0;
 }

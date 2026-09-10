@@ -25,7 +25,7 @@ export default async function RootLayout({
       <body className="min-h-screen antialiased">
         <Providers locale={locale} theme={theme}>
           <Header />
-          <main>{children}</main>
+          <main className="site-main">{children}</main>
           <Footer />
         </Providers>
       </body>
