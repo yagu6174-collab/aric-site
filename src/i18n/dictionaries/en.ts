@@ -62,6 +62,13 @@ export const en = {
     close: "Close",
     count: "images",
     untitled: "Ungrouped",
+    filter: "Filter",
+    search: "Search",
+    all: "All",
+    searchHint: "Search albums or captions",
+    noResults: "No matching photographs.",
+    prev: "Prev",
+    next: "Next",
   },
   contact: {
     title: "Contact",

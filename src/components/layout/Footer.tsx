@@ -7,7 +7,7 @@ import { useI18n } from "@/i18n/provider";
 export function Footer() {
   const { dict } = useI18n();
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname === "/photography") return null;
 
   return (
     <footer className="mt-24 border-t border-[var(--line)]">

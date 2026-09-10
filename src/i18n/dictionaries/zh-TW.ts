@@ -62,6 +62,13 @@ export const zhTW = {
     close: "關閉",
     count: "張",
     untitled: "未分組",
+    filter: "篩選",
+    search: "搜尋",
+    all: "全部",
+    searchHint: "按相簿或說明搜尋",
+    noResults: "沒有符合的照片。",
+    prev: "上一張",
+    next: "下一張",
   },
   contact: {
     title: "聯繫",

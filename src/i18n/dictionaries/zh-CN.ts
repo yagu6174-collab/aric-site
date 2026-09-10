@@ -62,6 +62,13 @@ export const zhCN = {
     close: "关闭",
     count: "张",
     untitled: "未分组",
+    filter: "筛选",
+    search: "搜索",
+    all: "全部",
+    searchHint: "按相册或说明搜索",
+    noResults: "没有匹配的照片。",
+    prev: "上一张",
+    next: "下一张",
   },
   contact: {
     title: "联系",

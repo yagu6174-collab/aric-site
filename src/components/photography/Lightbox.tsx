@@ -1,50 +1,95 @@
 "use client";
 
-import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import type { Photo } from "@/types/photo";
 import { useI18n } from "@/i18n/provider";
 
 export function Lightbox({
-  photo,
+  photos,
+  index,
   onClose,
+  onIndex,
 }: {
-  photo: Photo;
+  photos: Photo[];
+  index: number;
   onClose: () => void;
+  onIndex: (next: number) => void;
 }) {
   const { dict } = useI18n();
+  const photo = photos[index];
+  const total = photos.length;
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/86 p-4"
-      onClick={onClose}
-    >
-      <button
-        type="button"
-        className="absolute top-5 right-5 text-white"
-        aria-label={dict.photography.close}
-        onClick={onClose}
-      >
-        <X />
-      </button>
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (!total) return;
+      if (event.key === "ArrowLeft") onIndex((index - 1 + total) % total);
+      if (event.key === "ArrowRight") onIndex((index + 1) % total);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [index, total, onClose, onIndex]);
+
+  if (!mounted || !photo) return null;
+
+  const go = (delta: number) => {
+    if (!total) return;
+    onIndex((index + delta + total) % total);
+  };
+
+  return createPortal(
+    <div className="photo-lightbox" onClick={onClose}>
+      <header className="photo-lightbox-bar" onClick={(event) => event.stopPropagation()}>
+        <p>
+          {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+        </p>
+        <div className="photo-lightbox-actions">
+          {total > 1 ? (
+            <>
+              <button type="button" className="photo-bracket" onClick={() => go(-1)}>
+                {dict.photography.prev}
+              </button>
+              <button type="button" className="photo-bracket" onClick={() => go(1)}>
+                {dict.photography.next}
+              </button>
+            </>
+          ) : null}
+          <button type="button" className="photo-bracket" onClick={onClose}>
+            {dict.photography.close}
+          </button>
+        </div>
+      </header>
       <figure
-        className="max-h-[88vh] max-w-5xl"
+        className="photo-lightbox-figure"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="relative h-[70vh] w-[min(90vw,960px)]">
+        <div className="photo-lightbox-frame">
           <Image
             src={photo.url}
-            alt={photo.album}
+            alt={photo.caption || photo.album}
             fill
             className="object-contain"
             unoptimized
           />
         </div>
-        <figcaption className="mt-4 text-center text-sm text-white/80">
-          <span className="font-serif text-lg text-white">{photo.album}</span>
-          {photo.caption ? <p className="mt-1">{photo.caption}</p> : null}
+        <figcaption>
+          <span>{photo.album}</span>
+          {photo.caption ? <p>{photo.caption}</p> : null}
         </figcaption>
       </figure>
-    </div>
+    </div>,
+    document.body,
   );
 }
