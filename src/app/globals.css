@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-ink: #121212;
+  --color-paper: #faf8f5;
+  --color-mist: #e8e4dc;
+  --color-stone: #6b6862;
+  --color-soft: #f3efe8;
+  --font-sans: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC",
+    "Noto Sans SC", sans-serif;
+  --font-serif: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC",
+    "Noto Serif SC", serif;
+}
+
+:root,
+.light {
+  --bg: #faf8f5;
+  --fg: #1a1916;
+  --muted: #6b6862;
+  --line: rgba(26, 25, 22, 0.12);
+  --glass: rgba(250, 248, 245, 0.72);
+  --card: #ffffff;
+  --accent: #1a1916;
+  --accent-fg: #faf8f5;
+}
+
+.dark {
+  --bg: #121212;
+  --fg: #f4f1ea;
+  --muted: #a39e94;
+  --line: rgba(244, 241, 234, 0.12);
+  --glass: rgba(18, 18, 18, 0.7);
+  --card: #191919;
+  --accent: #f4f1ea;
+  --accent-fg: #121212;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--fg) 18%, transparent);
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.masonry {
+  columns: 1;
+  column-gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .masonry {
+    columns: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry {
+    columns: 3;
+  }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+}
