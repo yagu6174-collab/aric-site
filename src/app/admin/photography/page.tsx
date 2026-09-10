@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -11,6 +12,7 @@ export default function AdminPhotographyPage() {
   const [caption, setCaption] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   async function load() {
     const res = await fetch("/api/photography", { cache: "no-store" });
@@ -18,8 +20,16 @@ export default function AdminPhotographyPage() {
   }
 
   useEffect(() => {
-    void load();
-  }, []);
+    void (async () => {
+      const res = await fetch("/api/auth", { cache: "no-store" });
+      const data = (await res.json()) as { authed?: boolean };
+      if (!data.authed) {
+        router.replace("/admin");
+        return;
+      }
+      await load();
+    })();
+  }, [router]);
 
   async function upload() {
     if (!file) return;

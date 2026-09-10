@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { sessionCookieOptions, signSession } from "@/lib/auth";
+import { isAuthed, sessionCookieOptions, signSession } from "@/lib/auth";
+
+export async function GET() {
+  return NextResponse.json({ authed: await isAuthed() });
+}
 
 export async function POST(request: Request) {
   const body = (await request.json()) as { password?: string };

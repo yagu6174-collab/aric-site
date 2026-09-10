@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -14,6 +15,7 @@ export default function AdminInsightsPage() {
   const [body, setBody] = useState("");
   const [category, setCategory] = useState<InsightCategory>("essay");
   const [message, setMessage] = useState("");
+  const router = useRouter();
 
   async function load() {
     const res = await fetch("/api/insights", { cache: "no-store" });
@@ -21,8 +23,16 @@ export default function AdminInsightsPage() {
   }
 
   useEffect(() => {
-    void load();
-  }, []);
+    void (async () => {
+      const res = await fetch("/api/auth", { cache: "no-store" });
+      const data = (await res.json()) as { authed?: boolean };
+      if (!data.authed) {
+        router.replace("/admin");
+        return;
+      }
+      await load();
+    })();
+  }, [router]);
 
   async function save() {
     const res = await fetch("/api/insights", {
