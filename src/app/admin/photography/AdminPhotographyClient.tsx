@@ -23,9 +23,9 @@ type Job = {
 async function readError(res: Response) {
   try {
     const data = (await res.json()) as { error?: string };
-    return data.error || "上传失败";
+    return data.error || "操作失败";
   } catch {
-    return "上传失败";
+    return "操作失败";
   }
 }
 
@@ -136,11 +136,20 @@ export function AdminPhotographyClient({
   }
 
   async function remove(id: string) {
-    const res = await fetch(`/api/photography?id=${encodeURIComponent(id)}`, {
+    setMessage("");
+    const res = await fetch("/api/photography", {
       method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+      cache: "no-store",
     });
-    if (res.ok) await load();
-    else setMessage("删除失败，请先登录");
+    if (!res.ok) {
+      setMessage(await readError(res));
+      return;
+    }
+    setPhotos((current) => current.filter((photo) => photo.id !== id));
+    await load();
+    router.refresh();
   }
 
   return (

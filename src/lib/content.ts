@@ -46,9 +46,7 @@ async function readBlobJson<T>(pathname: string): Promise<T | null> {
   if (!hit) return null;
   const res = await fetch(hit.url, {
     cache: "no-store",
-    headers: process.env.BLOB_READ_WRITE_TOKEN
-      ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-      : undefined,
+    headers: blobAuthHeaders(),
   });
   if (!res.ok) return null;
   return (await res.json()) as T;
@@ -61,6 +59,58 @@ async function writeBlobJson(pathname: string, data: unknown) {
     allowOverwrite: true,
     contentType: "application/json",
   });
+}
+
+function blobAuthHeaders(): HeadersInit | undefined {
+  return process.env.BLOB_READ_WRITE_TOKEN
+    ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
+    : undefined;
+}
+
+function pathnameFromUrl(url: string) {
+  try {
+    return new URL(url).pathname.replace(/^\//, "");
+  } catch {
+    return "";
+  }
+}
+
+async function readPhotoFromBlob(url: string): Promise<Photo | null> {
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: blobAuthHeaders(),
+  });
+  if (!res.ok) return null;
+  const photo = (await res.json()) as Photo;
+  return photo?.id && photo?.url ? photo : null;
+}
+
+async function getGalleryRecords() {
+  const records = await listAll("gallery/");
+  const photos: Photo[] = [];
+  const seen = new Set<string>();
+  for (const blob of records.filter((item) => item.pathname.endsWith(".json"))) {
+    try {
+      const photo = await readPhotoFromBlob(blob.url);
+      if (!photo || seen.has(photo.id)) continue;
+      seen.add(photo.id);
+      photos.push(photo);
+    } catch {
+      continue;
+    }
+  }
+  return photos;
+}
+
+async function deleteBlobUrls(urls: string[]) {
+  const unique = [...new Set(urls.filter(Boolean))];
+  for (const url of unique) {
+    try {
+      await del(url);
+    } catch {
+      // already gone, or this value is not a blob URL/pathname
+    }
+  }
 }
 
 async function seedInsights(): Promise<Insight[]> {
@@ -114,43 +164,7 @@ export async function saveInsights(items: Insight[]) {
 
 export async function getPhotos(): Promise<Photo[]> {
   if (hasBlobToken()) {
-    const records = await listAll("gallery/");
-    const jsonBlobs = records.filter((item) => item.pathname.endsWith(".json"));
-    if (jsonBlobs.length) {
-      const photos: Photo[] = [];
-      for (const blob of jsonBlobs) {
-        try {
-          const res = await fetch(blob.url, {
-            cache: "no-store",
-            headers: process.env.BLOB_READ_WRITE_TOKEN
-              ? { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` }
-              : undefined,
-          });
-          if (!res.ok) continue;
-          photos.push((await res.json()) as Photo);
-        } catch {
-          continue;
-        }
-      }
-      if (photos.length) return photos;
-    }
-
-    const fromIndex = await readBlobJson<Photo[]>("content/photos.json");
-    if (fromIndex?.length) return fromIndex;
-
-    const uploaded = await listAll("photos/");
-    return uploaded
-      .filter((item) => !item.pathname.endsWith(".json"))
-      .sort(
-        (a, b) =>
-          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime(),
-      )
-      .map((item) => ({
-        id: item.pathname,
-        url: item.url,
-        album: "未分组",
-        caption: "",
-      }));
+    return getGalleryRecords();
   }
 
   try {
@@ -185,31 +199,67 @@ export async function savePhotos(items: Photo[]) {
 }
 
 export async function deletePhoto(id: string) {
-  const photos = await getPhotos();
-  const target = photos.find((item) => item.id === id);
-  if (hasBlobToken()) {
-    if (target?.url) {
-      try {
-        await del(target.url);
-      } catch {
-        // keep going even if the image blob is already gone
-      }
-    }
-    try {
-      await del(`gallery/${id}.json`);
-    } catch {
-      // recovered photos use the image pathname as id
-    }
-    if (id.startsWith("photos/")) {
-      try {
-        await del(id);
-      } catch {
-        // ignore
-      }
-    }
+  if (!hasBlobToken()) {
+    const photos = await getPhotos();
+    await savePhotos(photos.filter((item) => item.id !== id));
     return;
   }
-  await savePhotos(photos.filter((item) => item.id !== id));
+
+  const urls = new Set<string>();
+  const galleryBlobs = await listAll("gallery/");
+
+  for (const blob of galleryBlobs) {
+    const isRecord = blob.pathname.endsWith(".json");
+    const matchesPath =
+      blob.pathname === `gallery/${id}.json` ||
+      blob.pathname.startsWith(`gallery/${id}`) ||
+      blob.pathname === id;
+    let record: Photo | null = null;
+    if (isRecord) {
+      try {
+        record = await readPhotoFromBlob(blob.url);
+      } catch {
+        record = null;
+      }
+    }
+    if (matchesPath || record?.id === id) {
+      urls.add(blob.url);
+      if (record?.url) urls.add(record.url);
+      const imagePath = record?.url ? pathnameFromUrl(record.url) : "";
+      if (imagePath) urls.add(imagePath);
+    }
+  }
+
+  const imageBlobs = await listAll("photos/");
+  for (const blob of imageBlobs) {
+    if (
+      blob.pathname === id ||
+      blob.url === id ||
+      urls.has(blob.url) ||
+      urls.has(blob.pathname)
+    ) {
+      urls.add(blob.url);
+      urls.add(blob.pathname);
+    }
+  }
+
+  urls.add(`gallery/${id}.json`);
+  if (id.startsWith("photos/")) urls.add(id);
+
+  try {
+    const staleIndex = await readBlobJson<Photo[]>("content/photos.json");
+    const stale = staleIndex?.find((item) => item.id === id);
+    if (stale?.url) {
+      urls.add(stale.url);
+      const imagePath = pathnameFromUrl(stale.url);
+      if (imagePath) urls.add(imagePath);
+    }
+    await writeBlobJson("content/photos.json", []);
+  } catch {
+    // ignore a missing legacy index
+  }
+
+  await deleteBlobUrls([...urls]);
 }
 
 export async function saveLocalUpload(file: File) {

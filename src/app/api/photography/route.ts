@@ -76,9 +76,25 @@ export async function DELETE(request: Request) {
   if (!(await isAuthed())) {
     return NextResponse.json({ error: "请先登录后台" }, { status: 401 });
   }
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
-  await deletePhoto(id);
-  return NextResponse.json({ ok: true });
+  try {
+    const { searchParams } = new URL(request.url);
+    let id = searchParams.get("id");
+    if (!id) {
+      try {
+        const body = (await request.json()) as { id?: string };
+        id = String(body.id || "").trim();
+      } catch {
+        id = "";
+      }
+    }
+    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    await deletePhoto(id);
+    return NextResponse.json(
+      { ok: true },
+      { headers: { "Cache-Control": "no-store, max-age=0" } },
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "删除失败";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
