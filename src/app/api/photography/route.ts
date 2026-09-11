@@ -2,7 +2,7 @@ import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
 import { hasBlobToken } from "@/lib/blob";
-import { getPhotos, saveLocalUpload, savePhotoRecord, deletePhoto } from "@/lib/content";
+import { getPhotos, saveLocalUpload, savePhotoRecord, deletePhotos } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -78,19 +78,38 @@ export async function DELETE(request: Request) {
   }
   try {
     const { searchParams } = new URL(request.url);
-    let id = searchParams.get("id");
-    if (!id) {
+    let ids: string[] = [];
+    let album = "";
+    const queryId = searchParams.get("id");
+    if (queryId) ids = [queryId.trim()];
+    else {
       try {
-        const body = (await request.json()) as { id?: string };
-        id = String(body.id || "").trim();
+        const body = (await request.json()) as {
+          id?: string;
+          ids?: string[];
+          album?: string;
+        };
+        if (Array.isArray(body.ids)) {
+          ids = body.ids.map((id) => String(id).trim()).filter(Boolean);
+        } else if (body.id) {
+          ids = [String(body.id).trim()].filter(Boolean);
+        }
+        album = String(body.album || "").trim();
       } catch {
-        id = "";
+        ids = [];
       }
     }
-    if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
-    await deletePhoto(id);
+    if (album) {
+      const photos = await getPhotos();
+      const key = album;
+      ids = photos
+        .filter((photo) => (photo.album.trim() || "未命名影集") === key)
+        .map((photo) => photo.id);
+    }
+    if (!ids.length) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    await deletePhotos(ids);
     return NextResponse.json(
-      { ok: true },
+      { ok: true, deleted: ids.length },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
     );
   } catch (error) {

@@ -1,7 +1,8 @@
 "use client";
 
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -20,6 +21,8 @@ type Job = {
   detail: string;
 };
 
+const FALLBACK_ALBUM = "未命名影集";
+
 async function readError(res: Response) {
   try {
     const data = (await res.json()) as { error?: string };
@@ -34,6 +37,27 @@ function collectImages(list: FileList | null) {
   return Array.from(list).filter(isImageFile);
 }
 
+function albumOf(photo: Photo) {
+  return photo.album.trim() || FALLBACK_ALBUM;
+}
+
+function folderNameFromFile(file?: File) {
+  if (!file) return "";
+  const rel = (file as File & { webkitRelativePath?: string }).webkitRelativePath || "";
+  return rel.split(/[/\\]/).filter(Boolean)[0] || "";
+}
+
+function groupPhotos(photos: Photo[]) {
+  const map = new Map<string, Photo[]>();
+  for (const photo of photos) {
+    const key = albumOf(photo);
+    const list = map.get(key) ?? [];
+    list.push(photo);
+    map.set(key, list);
+  }
+  return [...map.entries()];
+}
+
 export function AdminPhotographyClient({
   initialPhotos,
 }: {
@@ -45,9 +69,15 @@ export function AdminPhotographyClient({
   const [jobs, setJobs] = useState<Job[]>([]);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [openAlbum, setOpenAlbum] = useState<string | null>(null);
   const filesRef = useRef<HTMLInputElement>(null);
   const folderRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const inferredAlbum = folderNameFromFile(jobs[0]?.file);
+  const groups = useMemo(() => groupPhotos(photos), [photos]);
+  const openPhotos = openAlbum
+    ? photos.filter((photo) => albumOf(photo) === openAlbum)
+    : [];
 
   async function load() {
     const res = await fetch(`/api/photography?ts=${Date.now()}`, {
@@ -69,6 +99,12 @@ export function AdminPhotographyClient({
     })();
   }, [router]);
 
+  useEffect(() => {
+    if (openAlbum && !photos.some((photo) => albumOf(photo) === openAlbum)) {
+      setOpenAlbum(null);
+    }
+  }, [photos, openAlbum]);
+
   function addFiles(list: FileList | null) {
     const images = collectImages(list);
     if (!images.length) {
@@ -83,7 +119,12 @@ export function AdminPhotographyClient({
         detail: formatBytes(file.size),
       })),
     );
-    setMessage(`已选择 ${images.length} 张照片。大于 4MB 的会先自动压缩。`);
+    const fromFolder = folderNameFromFile(images[0]);
+    setMessage(
+      fromFolder
+        ? `已选择文件夹「${fromFolder}」里的 ${images.length} 张。未填写影集名时会用这个文件夹名。`
+        : `已选择 ${images.length} 张照片。大于 4MB 的会先自动压缩。`,
+    );
   }
 
   function patchJob(id: string, next: Partial<Job>) {
@@ -97,6 +138,7 @@ export function AdminPhotographyClient({
       setMessage("请先选择照片或文件夹。");
       return;
     }
+    const albumName = album.trim() || inferredAlbum || FALLBACK_ALBUM;
     setBusy(true);
     let ok = 0;
     let fail = 0;
@@ -114,7 +156,7 @@ export function AdminPhotographyClient({
         });
         const form = new FormData();
         form.append("file", prepared);
-        form.append("album", album);
+        form.append("album", albumName);
         form.append("caption", caption);
         const res = await fetch("/api/photography", { method: "POST", body: form });
         if (!res.ok) throw new Error(await readError(res));
@@ -129,62 +171,129 @@ export function AdminPhotographyClient({
       }
     }
     setBusy(false);
-    setMessage(`完成：成功 ${ok} 张${fail ? `，失败 ${fail} 张` : ""}。`);
+    setMessage(`完成：成功 ${ok} 张${fail ? `，失败 ${fail} 张` : ""}。已归入「${albumName}」。`);
     if (filesRef.current) filesRef.current.value = "";
     if (folderRef.current) folderRef.current.value = "";
     await load();
+    setOpenAlbum(albumName);
+    router.refresh();
   }
 
-  async function remove(id: string) {
+  async function removeIds(ids: string[], label: string) {
+    if (!ids.length) return;
     setMessage("");
+    setBusy(true);
     const res = await fetch("/api/photography", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify(ids.length === 1 ? { id: ids[0] } : { ids }),
       cache: "no-store",
     });
+    setBusy(false);
     if (!res.ok) {
       setMessage(await readError(res));
       return;
     }
-    setPhotos((current) => current.filter((photo) => photo.id !== id));
+    const drop = new Set(ids);
+    setPhotos((current) => current.filter((photo) => !drop.has(photo.id)));
+    setMessage(label);
     await load();
     router.refresh();
+  }
+
+  async function remove(id: string) {
+    await removeIds([id], "已删除 1 张。");
+  }
+
+  async function removeAlbum(name: string) {
+    const ids = photos.filter((photo) => albumOf(photo) === name).map((photo) => photo.id);
+    if (!ids.length) return;
+    const ok = window.confirm(`确定删除「${name}」全部 ${ids.length} 张？此操作不可恢复。`);
+    if (!ok) return;
+    await removeIds(ids, `已删除影集「${name}」共 ${ids.length} 张。`);
+    setOpenAlbum(null);
   }
 
   return (
     <div className="space-y-6">
       <div className="space-y-3">
-        <h2 className="font-serif text-xl">前台正在展示 {photos.length} 张</h2>
+        <h2 className="font-serif text-xl">
+          前台正在展示 {photos.length} 张
+          {groups.length ? ` · ${groups.length} 个影集` : ""}
+        </h2>
         <p className="text-sm text-[var(--muted)]">
-          下面这些就是访客在「摄影自留地」看到的图。点删除后，前台会马上拿掉。
+          按影集文件夹查看。点开文件夹可删单张，也可整组删除。前台会马上同步。
         </p>
         {photos.length === 0 ? (
           <p className="text-sm text-[var(--muted)]">还没有已发布的照片。</p>
-        ) : (
-          <div className="grid gap-3">
-            {photos.map((photo) => (
-              <Card
-                key={photo.id}
-                className="flex items-center justify-between gap-3"
+        ) : openAlbum ? (
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 text-sm text-[var(--muted)]"
+                onClick={() => setOpenAlbum(null)}
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <ChevronLeft className="h-4 w-4" />
+                全部影集
+              </button>
+              <Button variant="ghost" onClick={() => void removeAlbum(openAlbum)} disabled={busy}>
+                {busy ? "删除中…" : "删除整组"}
+              </Button>
+            </div>
+            <div>
+              <h3 className="font-serif text-2xl">{openAlbum}</h3>
+              <p className="mt-1 text-sm text-[var(--muted)]">{openPhotos.length} 张</p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+              {openPhotos.map((photo) => (
+                <div key={photo.id} className="group relative overflow-hidden rounded-xl bg-[var(--card)]">
                   <img
                     src={photo.url}
                     alt={photo.caption || photo.album}
-                    className="h-20 w-20 shrink-0 object-cover"
+                    className="aspect-square w-full object-cover"
                   />
-                  <div className="min-w-0">
-                    <p className="font-serif">{photo.album}</p>
-                    <p className="truncate text-sm text-[var(--muted)]">
-                      {photo.caption || "无旁白"}
-                    </p>
-                  </div>
+                  <button
+                    type="button"
+                    className="absolute right-1.5 top-1.5 rounded-full bg-black/70 px-2 py-1 text-[11px] text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                    onClick={() => void remove(photo.id)}
+                    disabled={busy}
+                  >
+                    删除
+                  </button>
                 </div>
-                <Button variant="ghost" onClick={() => remove(photo.id)}>
-                  删除
-                </Button>
-              </Card>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {groups.map(([name, items]) => (
+              <div
+                key={name}
+                className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)]"
+              >
+                <button
+                  type="button"
+                  className="block w-full text-left"
+                  onClick={() => setOpenAlbum(name)}
+                >
+                  <FolderCover items={items} />
+                  <div className="space-y-1 p-4">
+                    <p className="truncate font-serif text-lg">{name}</p>
+                    <p className="text-sm text-[var(--muted)]">{items.length} 张</p>
+                  </div>
+                </button>
+                <div className="px-4 pb-4">
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => void removeAlbum(name)}
+                    disabled={busy}
+                  >
+                    {busy ? "删除中…" : "删除整组"}
+                  </Button>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -193,12 +302,16 @@ export function AdminPhotographyClient({
         <h1 className="font-serif text-2xl">上传照片</h1>
         <p className="text-sm text-[var(--muted)]">
           可多选，也可直接选整个文件夹。单张超过 4MB 会在浏览器里自动压到
-          4MB 以内再上传。影集名称会成为前台分组标题。
+          4MB 以内再上传。影集名称会成为前台分组标题，也会出现在上面的文件夹里。
         </p>
         <input
           value={album}
           onChange={(e) => setAlbum(e.target.value)}
-          placeholder="影集名称，例如 2026"
+          placeholder={
+            inferredAlbum
+              ? `影集名称，不填则用文件夹「${inferredAlbum}」`
+              : "影集名称，例如 2026"
+          }
           className="w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2"
         />
         <input
@@ -249,6 +362,34 @@ export function AdminPhotographyClient({
         </Button>
         {message ? <p className="text-sm text-[var(--muted)]">{message}</p> : null}
       </Card>
+    </div>
+  );
+}
+
+function FolderCover({ items }: { items: Photo[] }) {
+  const covers = items.slice(0, 4);
+  if (!covers.length) {
+    return <div className="aspect-[4/3] bg-[color-mix(in_srgb,var(--fg)_6%,var(--bg))]" />;
+  }
+  if (covers.length === 1) {
+    return (
+      <img
+        src={covers[0].url}
+        alt=""
+        className="aspect-[4/3] w-full object-cover"
+      />
+    );
+  }
+  return (
+    <div className="grid aspect-[4/3] grid-cols-2 grid-rows-2 gap-px bg-[var(--line)]">
+      {covers.map((photo) => (
+        <img
+          key={photo.id}
+          src={photo.url}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      ))}
     </div>
   );
 }

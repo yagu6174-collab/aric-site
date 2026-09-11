@@ -7,7 +7,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="min-h-screen bg-[var(--bg)] px-5 py-10">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-8 flex items-center justify-between text-sm">
           <Link href="/admin" className="font-serif text-xl">
             管理后台

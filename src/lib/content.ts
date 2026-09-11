@@ -199,9 +199,17 @@ export async function savePhotos(items: Photo[]) {
 }
 
 export async function deletePhoto(id: string) {
+  await deletePhotos([id]);
+}
+
+export async function deletePhotos(ids: string[]) {
+  const unique = [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
+  if (!unique.length) return;
+  const idSet = new Set(unique);
+
   if (!hasBlobToken()) {
     const photos = await getPhotos();
-    await savePhotos(photos.filter((item) => item.id !== id));
+    await savePhotos(photos.filter((item) => !idSet.has(item.id)));
     return;
   }
 
@@ -210,10 +218,12 @@ export async function deletePhoto(id: string) {
 
   for (const blob of galleryBlobs) {
     const isRecord = blob.pathname.endsWith(".json");
-    const matchesPath =
-      blob.pathname === `gallery/${id}.json` ||
-      blob.pathname.startsWith(`gallery/${id}`) ||
-      blob.pathname === id;
+    const matchesPath = unique.some(
+      (id) =>
+        blob.pathname === `gallery/${id}.json` ||
+        blob.pathname.startsWith(`gallery/${id}`) ||
+        blob.pathname === id,
+    );
     let record: Photo | null = null;
     if (isRecord) {
       try {
@@ -222,7 +232,7 @@ export async function deletePhoto(id: string) {
         record = null;
       }
     }
-    if (matchesPath || record?.id === id) {
+    if (matchesPath || (record && idSet.has(record.id))) {
       urls.add(blob.url);
       if (record?.url) urls.add(record.url);
       const imagePath = record?.url ? pathnameFromUrl(record.url) : "";
@@ -233,8 +243,8 @@ export async function deletePhoto(id: string) {
   const imageBlobs = await listAll("photos/");
   for (const blob of imageBlobs) {
     if (
-      blob.pathname === id ||
-      blob.url === id ||
+      idSet.has(blob.pathname) ||
+      idSet.has(blob.url) ||
       urls.has(blob.url) ||
       urls.has(blob.pathname)
     ) {
@@ -243,13 +253,15 @@ export async function deletePhoto(id: string) {
     }
   }
 
-  urls.add(`gallery/${id}.json`);
-  if (id.startsWith("photos/")) urls.add(id);
+  for (const id of unique) {
+    urls.add(`gallery/${id}.json`);
+    if (id.startsWith("photos/")) urls.add(id);
+  }
 
   try {
     const staleIndex = await readBlobJson<Photo[]>("content/photos.json");
-    const stale = staleIndex?.find((item) => item.id === id);
-    if (stale?.url) {
+    for (const stale of staleIndex ?? []) {
+      if (!idSet.has(stale.id) || !stale.url) continue;
       urls.add(stale.url);
       const imagePath = pathnameFromUrl(stale.url);
       if (imagePath) urls.add(imagePath);
