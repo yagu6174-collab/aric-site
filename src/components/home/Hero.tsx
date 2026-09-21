@@ -55,7 +55,12 @@ export function Hero() {
       >
         <motion.div className="home-still-wrap" style={{ scale }}>
           <div className="home-still" />
-          <div className="home-grain" />
+          <div className="home-lines" aria-hidden>
+            <span className="home-line-frame" />
+            <span className="home-line-v" />
+            <span className="home-line-h" />
+            <span className="home-line-mark" />
+          </div>
         </motion.div>
         <div className="home-overlay" style={{ opacity: overlay }} />
         <h1 className="sr-only">{dict.home.heroTitle}</h1>

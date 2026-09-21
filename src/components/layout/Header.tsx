@@ -58,12 +58,6 @@ export function Header() {
             {dict.name}
             <span className="ml-2 text-xs text-[var(--muted)]">{dict.nameEn}</span>
           </Link>
-          {clear ? (
-            <p className="home-wordmark">
-              {dict.name}
-              <span>{dict.nameEn}</span>
-            </p>
-          ) : null}
           <nav
             className={cn(
               "hidden items-center gap-5 text-sm md:flex",
