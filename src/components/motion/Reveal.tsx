@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export function Reveal({
   children,
@@ -12,7 +13,7 @@ export function Reveal({
   delay?: number;
 }) {
   return (
-    <div className={className}>
+    <div className={cn("essay-reveal", className)}>
       <motion.div
         initial={{ y: 12, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}

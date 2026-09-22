@@ -22,7 +22,7 @@ export function InsightsBoard({ items }: { items: Insight[] }) {
   return (
     <section className="essay-chapter">
       <div className="essay-prose">
-        <Reveal className="overflow-hidden">
+        <Reveal>
           <h1>{dict.insights.title}</h1>
         </Reveal>
         <Disclaimer />

@@ -15,7 +15,7 @@ export function LatestInsights({ items }: { items: Insight[] }) {
         02
       </p>
       <div className="essay-prose">
-        <Reveal className="overflow-hidden">
+        <Reveal>
           <h2>{dict.home.latestTitle}</h2>
         </Reveal>
         <ul className="essay-article-list">

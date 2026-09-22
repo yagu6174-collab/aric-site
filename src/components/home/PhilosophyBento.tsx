@@ -12,7 +12,7 @@ export function PhilosophyBento() {
       <p className="essay-num" aria-hidden>
         01
       </p>
-      <Reveal className="essay-prose overflow-hidden">
+      <Reveal className="essay-prose">
         <h2>{dict.home.philosophyTitle}</h2>
         {dict.philosophies.map((item) => (
           <p key={item.body}>
