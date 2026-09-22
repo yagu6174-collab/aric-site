@@ -4,8 +4,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
 
 export function PhilosophyBento() {
-  const { dict, locale } = useI18n();
-  const glue = locale === "en" ? " " : "";
+  const { dict } = useI18n();
 
   return (
     <section className="essay-chapter">
@@ -15,8 +14,8 @@ export function PhilosophyBento() {
       <Reveal className="essay-prose overflow-hidden">
         <h2>{dict.home.philosophyTitle}</h2>
         {dict.philosophies.map((item) => (
-          <p key={item.body}>
-            {[item.title, item.body].filter(Boolean).join(glue)}
+          <p key={item.title}>
+            {item.title}。{item.body}
           </p>
         ))}
       </Reveal>
