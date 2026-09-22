@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import type { Insight, InsightCategory } from "@/types/insight";
 import { ArticleCard } from "@/components/insights/ArticleCard";
 import { CategoryTabs } from "@/components/insights/CategoryTabs";
+import { Disclaimer } from "@/components/insights/Disclaimer";
+import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
 
 export function InsightsBoard({ items }: { items: Insight[] }) {
@@ -18,17 +20,23 @@ export function InsightsBoard({ items }: { items: Insight[] }) {
   );
 
   return (
-    <div className="mt-8 space-y-6">
-      <CategoryTabs value={category} onChange={setCategory} />
-      {filtered.length ? (
-        <div className="grid gap-4">
-          {filtered.map((item) => (
-            <ArticleCard key={item.slug} item={item} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-[var(--muted)]">{dict.insights.empty}</p>
-      )}
-    </div>
+    <section className="essay-chapter">
+      <div className="essay-prose">
+        <Reveal className="overflow-hidden">
+          <h1>{dict.insights.title}</h1>
+        </Reveal>
+        <Disclaimer />
+        <CategoryTabs value={category} onChange={setCategory} />
+        {filtered.length ? (
+          <ul className="essay-article-list">
+            {filtered.map((item, index) => (
+              <ArticleCard key={item.slug} item={item} delay={index * 0.05} />
+            ))}
+          </ul>
+        ) : (
+          <p className="essay-note">{dict.insights.empty}</p>
+        )}
+      </div>
+    </section>
   );
 }

@@ -7,9 +7,7 @@ import { useI18n } from "@/i18n/provider";
 export function StudioDirectory() {
   const { dict } = useI18n();
   const items = [
-    { href: "/insights", ...dict.studio.insights },
     { href: "/about", ...dict.studio.about },
-    { href: "/photography", ...dict.studio.photography },
     { href: "/contact", ...dict.studio.contact },
   ];
 

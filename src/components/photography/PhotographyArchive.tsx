@@ -95,99 +95,91 @@ export function PhotographyArchive({ photos }: { photos: Photo[] }) {
   };
 
   return (
-    <div className="photo-page">
-      <h1 className="sr-only">{dict.photography.title}</h1>
-      <header className="photo-toolbar">
-        <p className="photo-toolbar-lead">
-          {dict.photography.intro}
-          {photos.length ? (
-            <span>
-              {" "}
-              {visible.length} {dict.photography.count}
-            </span>
-          ) : null}
-        </p>
-        <div className="photo-toolbar-center">
-          <button
-            type="button"
-            className={`photo-bracket ${filterOpen ? "is-on" : ""}`}
-            onClick={() => {
-              setSearchOpen(false);
-              setFilterOpen((open) => !open);
-            }}
-          >
-            {dict.photography.filter}
-          </button>
-        </div>
-        <div className="photo-toolbar-end">
-          <button
-            type="button"
-            className={`photo-bracket photo-bracket-search ${searchOpen ? "is-on" : ""}`}
-            onClick={() => {
-              setFilterOpen(false);
-              setSearchOpen((open) => !open);
-            }}
-          >
-            {dict.photography.search}
-          </button>
-        </div>
-      </header>
-
-      {filterOpen ? (
-        <div className="photo-filter-panel">
-          <button
-            type="button"
-            className={`photo-bracket ${album === "all" ? "is-on" : ""}`}
-            onClick={() => {
-              setAlbum("all");
-              setFilterOpen(false);
-            }}
-          >
-            {dict.photography.all}
-          </button>
-          {albums.map(([name, count]) => (
+    <div className="essay-photo">
+      <section className="essay-chapter essay-photo-head">
+        <div className="essay-prose">
+          <h1>{dict.photography.title}</h1>
+          <p className="essay-note">
+            {dict.photography.intro}
+            {photos.length ? ` ${visible.length} ${dict.photography.count}` : null}
+          </p>
+          <div className="essay-cats">
             <button
-              key={name}
               type="button"
-              className={`photo-bracket ${album === name ? "is-on" : ""}`}
+              aria-pressed={filterOpen}
               onClick={() => {
-                setAlbum(name);
-                setFilterOpen(false);
+                setSearchOpen(false);
+                setFilterOpen((open) => !open);
               }}
             >
-              {name}
-              <i>{count}</i>
+              {dict.photography.filter}
             </button>
-          ))}
+            <button
+              type="button"
+              aria-pressed={searchOpen}
+              onClick={() => {
+                setFilterOpen(false);
+                setSearchOpen((open) => !open);
+              }}
+            >
+              {dict.photography.search}
+            </button>
+          </div>
+          {filterOpen ? (
+            <div className="essay-cats">
+              <button
+                type="button"
+                aria-pressed={album === "all"}
+                onClick={() => {
+                  setAlbum("all");
+                  setFilterOpen(false);
+                }}
+              >
+                {dict.photography.all}
+              </button>
+              {albums.map(([name, count]) => (
+                <button
+                  key={name}
+                  type="button"
+                  aria-pressed={album === name}
+                  onClick={() => {
+                    setAlbum(name);
+                    setFilterOpen(false);
+                  }}
+                >
+                  {name} {count}
+                </button>
+              ))}
+            </div>
+          ) : null}
+          {searchOpen ? (
+            <div className="essay-search">
+              <input
+                ref={searchRef}
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={dict.photography.searchHint}
+                aria-label={dict.photography.search}
+              />
+              <button
+                type="button"
+                className="essay-text-btn"
+                onClick={() => {
+                  setQuery("");
+                  setSearchOpen(false);
+                }}
+              >
+                {dict.photography.close}
+              </button>
+            </div>
+          ) : null}
         </div>
-      ) : null}
-
-      {searchOpen ? (
-        <div className="photo-search-bar">
-          <input
-            ref={searchRef}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={dict.photography.searchHint}
-            aria-label={dict.photography.search}
-          />
-          <button
-            type="button"
-            className="photo-bracket"
-            onClick={() => {
-              setQuery("");
-              setSearchOpen(false);
-            }}
-          >
-            {dict.photography.close}
-          </button>
-        </div>
-      ) : null}
+      </section>
 
       {!photos.length ? (
-        <p className="photo-empty">{dict.photography.empty}</p>
+        <p className="essay-note essay-photo-empty">{dict.photography.empty}</p>
       ) : !visible.length ? (
-        <p className="photo-empty">{dict.photography.noResults}</p>
+        <p className="essay-note essay-photo-empty">{dict.photography.noResults}</p>
       ) : (
         <div
           ref={wallRef}

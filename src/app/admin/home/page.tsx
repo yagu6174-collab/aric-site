@@ -16,9 +16,7 @@ const localeLabels: Record<Locale, string> = {
 };
 
 const studioLabels: { key: HomeStudioKey; label: string }[] = [
-  { key: "insights", label: "理财见解" },
   { key: "about", label: "关于与履历" },
-  { key: "photography", label: "摄影自留地" },
   { key: "contact", label: "联系" },
 ];
 

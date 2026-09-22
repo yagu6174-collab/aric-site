@@ -7,5 +7,10 @@ export const fetchCache = "force-no-store";
 
 export default async function PhotographyPage() {
   const photos = await getPhotos();
-  return <PhotographyArchive photos={photos} />;
+
+  return (
+    <div className="essay-page">
+      <PhotographyArchive photos={photos} />
+    </div>
+  );
 }
