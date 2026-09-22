@@ -59,12 +59,19 @@ export function homeCopyFromDictionary(dict: CopySource): HomeCopy {
   };
 }
 
+export const HOME_COPY_REVISION = 2;
+
 export function defaultHomeCopyBundle(): HomeCopyBundle {
   return {
     "zh-CN": homeCopyFromDictionary(dictionaries["zh-CN"]),
     "zh-TW": homeCopyFromDictionary(dictionaries["zh-TW"]),
     en: homeCopyFromDictionary(dictionaries.en),
   };
+}
+
+export function isCurrentHomeCopy(raw: unknown): boolean {
+  if (!raw || typeof raw !== "object") return false;
+  return Number((raw as { revision?: unknown }).revision) >= HOME_COPY_REVISION;
 }
 
 export function normalizeHomeCopy(raw: unknown, fallback: HomeCopy): HomeCopy {

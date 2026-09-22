@@ -2,7 +2,11 @@ import { mkdir, readdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { unstable_noStore as noStore } from "next/cache";
 import { del, list, put } from "@vercel/blob";
-import { normalizeHomeCopyBundle } from "@/lib/home-copy";
+import {
+  HOME_COPY_REVISION,
+  isCurrentHomeCopy,
+  normalizeHomeCopyBundle,
+} from "@/lib/home-copy";
 import type { AboutContent, HomeContent, SiteProfile } from "@/types/site";
 import type { HomeCopyBundle } from "@/types/home-copy";
 import type { Insight } from "@/types/insight";
@@ -135,29 +139,38 @@ export async function getHome(): Promise<HomeContent> {
   return readJson<HomeContent>(path.join(root, "content", "home.json"));
 }
 
+type StoredHomeCopy = HomeCopyBundle & { revision?: number };
+
 export async function getHomeCopy(): Promise<HomeCopyBundle> {
   noStore();
   try {
-    const fromBlob = await readBlobJson<HomeCopyBundle>("content/home-copy.json");
-    if (fromBlob) return normalizeHomeCopyBundle(fromBlob);
+    const fromBlob = await readBlobJson<StoredHomeCopy>("content/home-copy.json");
+    if (fromBlob && isCurrentHomeCopy(fromBlob)) {
+      return normalizeHomeCopyBundle(fromBlob);
+    }
   } catch {
     // Blob may be missing or unreachable; fall back to local defaults.
   }
   try {
-    return normalizeHomeCopyBundle(await readJson<HomeCopyBundle>(localHomeCopy));
+    const fromLocal = await readJson<StoredHomeCopy>(localHomeCopy);
+    if (isCurrentHomeCopy(fromLocal)) {
+      return normalizeHomeCopyBundle(fromLocal);
+    }
   } catch {
-    return normalizeHomeCopyBundle(null);
+    // Local file may be missing or still the previous draft.
   }
+  return normalizeHomeCopyBundle(null);
 }
 
 export async function saveHomeCopy(bundle: HomeCopyBundle) {
   const next = normalizeHomeCopyBundle(bundle);
+  const stored: StoredHomeCopy = { ...next, revision: HOME_COPY_REVISION };
   if (hasBlobToken()) {
-    await writeBlobJson("content/home-copy.json", next);
+    await writeBlobJson("content/home-copy.json", stored);
     return next;
   }
   await ensureDataDir();
-  await writeFile(localHomeCopy, JSON.stringify(next, null, 2), "utf8");
+  await writeFile(localHomeCopy, JSON.stringify(stored, null, 2), "utf8");
   return next;
 }
 
