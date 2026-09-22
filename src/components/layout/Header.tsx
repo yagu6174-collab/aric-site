@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Container } from "@/components/ui/Container";
@@ -14,7 +14,6 @@ export function Header() {
   const { dict } = useI18n();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [clear, setClear] = useState(pathname === "/");
 
   const items = [
     { href: "/", label: dict.nav.home },
@@ -24,46 +23,17 @@ export function Header() {
     { href: "/contact", label: dict.nav.contact },
   ];
 
-  useEffect(() => {
-    if (pathname !== "/") {
-      setClear(false);
-      return;
-    }
-    const onScroll = () => {
-      setClear(window.scrollY < window.innerHeight * 0.78);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [pathname]);
-
   if (pathname.startsWith("/admin")) return null;
 
   return (
     <>
-      <header
-        className={cn(
-          "site-header border-b border-[var(--line)]",
-          clear && "is-clear",
-        )}
-      >
+      <header className="site-header border-b border-[var(--line)]">
         <Container className="relative flex items-center justify-between gap-4 py-3">
-          <Link
-            href="/"
-            className={cn(
-              "shrink-0 font-serif text-lg tracking-wide transition",
-              clear && "pointer-events-none opacity-0",
-            )}
-          >
+          <Link href="/" className="shrink-0 font-serif text-lg tracking-wide">
             {dict.name}
             <span className="ml-2 text-xs text-[var(--muted)]">{dict.nameEn}</span>
           </Link>
-          <nav
-            className={cn(
-              "hidden items-center gap-5 text-sm md:flex",
-              clear && "pointer-events-none opacity-0",
-            )}
-          >
+          <nav className="hidden items-center gap-5 text-sm md:flex">
             {items.map((item) => (
               <Link
                 key={item.href}
@@ -71,8 +41,8 @@ export function Header() {
                 className={cn(
                   "transition hover:text-[var(--fg)]",
                   pathname === item.href
-                    ? "text-[var(--fg)]"
-                    : "text-[var(--muted)]",
+                    ? "text-[var(--muted)]"
+                    : "text-[var(--fg)]",
                 )}
               >
                 {item.label}
@@ -109,9 +79,7 @@ export function Header() {
           </div>
         ) : null}
       </header>
-      {pathname !== "/" ? (
-        <div className="site-header-spacer" aria-hidden />
-      ) : null}
+      <div className="site-header-spacer" aria-hidden />
     </>
   );
 }

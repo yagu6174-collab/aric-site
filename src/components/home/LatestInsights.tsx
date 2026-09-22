@@ -1,24 +1,39 @@
 "use client";
 
+import Link from "next/link";
 import type { Insight } from "@/types/insight";
-import { ArticleCard } from "@/components/insights/ArticleCard";
 import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
+import { formatDate } from "@/lib/utils";
 
 export function LatestInsights({ items }: { items: Insight[] }) {
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
 
   return (
-    <section className="py-16 sm:py-24">
-      <Reveal className="overflow-hidden">
-        <h2 className="font-serif text-3xl sm:text-4xl">{dict.home.latestTitle}</h2>
-      </Reveal>
-      <div className="mt-10 grid gap-8">
-        {items.slice(0, 3).map((item, index) => (
-          <Reveal key={item.slug} delay={index * 0.06} className="overflow-hidden">
-            <ArticleCard item={item} />
-          </Reveal>
-        ))}
+    <section className="essay-chapter">
+      <p className="essay-num" aria-hidden>
+        02
+      </p>
+      <div className="essay-prose">
+        <Reveal className="overflow-hidden">
+          <h2>{dict.home.latestTitle}</h2>
+        </Reveal>
+        <ul className="essay-article-list">
+          {items.slice(0, 3).map((item, index) => (
+            <li key={item.slug}>
+              <Reveal delay={index * 0.06} className="overflow-hidden">
+                <Link href={`/insights/${item.slug}`}>
+                  <small>
+                    {formatDate(item.date, locale)} · {item.readingMinutes}{" "}
+                    {dict.insights.minRead} · {dict.insights.categories[item.category]}
+                  </small>
+                  <strong>{item.title}</strong>
+                  <span>{item.excerpt}</span>
+                </Link>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

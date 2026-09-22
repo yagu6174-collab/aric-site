@@ -14,13 +14,13 @@ export function Reveal({
   return (
     <div className={className}>
       <motion.div
-        initial={{ y: 28, opacity: 0 }}
+        initial={{ y: 12, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{
-          duration: 0.9,
+          duration: 0.45,
           delay,
-          ease: [0.22, 1, 0.36, 1],
+          ease: [0.19, 1, 0.22, 1],
         }}
       >
         {children}
