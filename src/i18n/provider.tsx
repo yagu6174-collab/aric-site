@@ -3,6 +3,8 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import { getDictionary, type Dictionary } from "@/i18n/dictionaries";
+import { applyHomeCopy } from "@/lib/home-copy";
+import type { HomeCopyBundle } from "@/types/home-copy";
 
 const I18nContext = createContext<{
   locale: Locale;
@@ -12,13 +14,19 @@ const I18nContext = createContext<{
 
 export function I18nProvider({
   initialLocale,
+  homeCopy,
   children,
 }: {
   initialLocale: Locale;
+  homeCopy?: HomeCopyBundle;
   children: React.ReactNode;
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
-  const dict = useMemo(() => getDictionary(locale), [locale]);
+  const dict = useMemo(() => {
+    const base = getDictionary(locale);
+    const copy = homeCopy?.[locale];
+    return copy ? applyHomeCopy(base, copy, locale) : base;
+  }, [locale, homeCopy]);
 
   const value = useMemo(
     () => ({

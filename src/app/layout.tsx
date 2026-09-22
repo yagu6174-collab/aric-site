@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Providers } from "@/components/providers";
 import { parseLocale } from "@/i18n/config";
+import { getHomeCopy } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -42,6 +43,7 @@ export default async function RootLayout({
   const jar = await cookies();
   const locale = parseLocale(jar.get("locale")?.value);
   const theme = jar.get("theme")?.value === "light" ? "light" : "dark";
+  const homeCopy = await getHomeCopy();
 
   return (
     <html
@@ -49,7 +51,7 @@ export default async function RootLayout({
       className={cn(theme, newsreader.variable, notoSerif.variable, robotoMono.variable)}
     >
       <body className="min-h-screen antialiased">
-        <Providers locale={locale} theme={theme}>
+        <Providers locale={locale} theme={theme} homeCopy={homeCopy}>
           <Header />
           <main className="site-main">{children}</main>
           <Footer />

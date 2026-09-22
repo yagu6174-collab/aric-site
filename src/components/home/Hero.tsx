@@ -8,8 +8,8 @@ export function Hero() {
   return (
     <section className="essay-hero">
       <h1 className="essay-hero-title">
-        {dict.home.heroLines.map((line) => (
-          <span key={line}>{line}</span>
+        {dict.home.heroLines.map((line, index) => (
+          <span key={`${index}-${line}`}>{line}</span>
         ))}
       </h1>
       <p className="essay-hero-lead">{dict.home.heroSubtitle}</p>

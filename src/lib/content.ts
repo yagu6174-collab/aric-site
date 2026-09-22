@@ -1,7 +1,10 @@
 import { mkdir, readdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { unstable_noStore as noStore } from "next/cache";
 import { del, list, put } from "@vercel/blob";
+import { normalizeHomeCopyBundle } from "@/lib/home-copy";
 import type { AboutContent, HomeContent, SiteProfile } from "@/types/site";
+import type { HomeCopyBundle } from "@/types/home-copy";
 import type { Insight } from "@/types/insight";
 import type { Photo } from "@/types/photo";
 import { hasBlobToken } from "@/lib/blob";
@@ -11,6 +14,7 @@ const dataDir = path.join(root, ".data");
 const insightsSeedDir = path.join(root, "content", "insights");
 const localInsights = path.join(dataDir, "insights.json");
 const localPhotos = path.join(dataDir, "photos.json");
+const localHomeCopy = path.join(dataDir, "home-copy.json");
 
 async function readJson<T>(file: string): Promise<T> {
   return JSON.parse(await readFile(file, "utf8")) as T;
@@ -129,6 +133,32 @@ export async function getSite(): Promise<SiteProfile> {
 
 export async function getHome(): Promise<HomeContent> {
   return readJson<HomeContent>(path.join(root, "content", "home.json"));
+}
+
+export async function getHomeCopy(): Promise<HomeCopyBundle> {
+  noStore();
+  try {
+    const fromBlob = await readBlobJson<HomeCopyBundle>("content/home-copy.json");
+    if (fromBlob) return normalizeHomeCopyBundle(fromBlob);
+  } catch {
+    // Blob may be missing or unreachable; fall back to local defaults.
+  }
+  try {
+    return normalizeHomeCopyBundle(await readJson<HomeCopyBundle>(localHomeCopy));
+  } catch {
+    return normalizeHomeCopyBundle(null);
+  }
+}
+
+export async function saveHomeCopy(bundle: HomeCopyBundle) {
+  const next = normalizeHomeCopyBundle(bundle);
+  if (hasBlobToken()) {
+    await writeBlobJson("content/home-copy.json", next);
+    return next;
+  }
+  await ensureDataDir();
+  await writeFile(localHomeCopy, JSON.stringify(next, null, 2), "utf8");
+  return next;
 }
 
 export async function getAbout(): Promise<AboutContent> {
