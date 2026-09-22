@@ -59,7 +59,7 @@ export function homeCopyFromDictionary(dict: CopySource): HomeCopy {
   };
 }
 
-export const HOME_COPY_REVISION = 3;
+export const HOME_COPY_REVISION = 2;
 
 export function defaultHomeCopyBundle(): HomeCopyBundle {
   return {
