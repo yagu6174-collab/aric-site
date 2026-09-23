@@ -7,6 +7,7 @@ import {
   isCurrentHomeCopy,
   normalizeHomeCopyBundle,
 } from "@/lib/home-copy";
+import { homeCopyToZhTW } from "@/lib/locale-sync";
 import type { AboutContent, HomeContent, SiteProfile } from "@/types/site";
 import type { HomeCopyBundle } from "@/types/home-copy";
 import type { Insight } from "@/types/insight";
@@ -141,12 +142,19 @@ export async function getHome(): Promise<HomeContent> {
 
 type StoredHomeCopy = HomeCopyBundle & { revision?: number };
 
+function withLiveTraditional(bundle: HomeCopyBundle): HomeCopyBundle {
+  return {
+    ...bundle,
+    "zh-TW": homeCopyToZhTW(bundle["zh-CN"]),
+  };
+}
+
 export async function getHomeCopy(): Promise<HomeCopyBundle> {
   noStore();
   try {
     const fromBlob = await readBlobJson<StoredHomeCopy>("content/home-copy.json");
     if (fromBlob && isCurrentHomeCopy(fromBlob)) {
-      return normalizeHomeCopyBundle(fromBlob);
+      return withLiveTraditional(normalizeHomeCopyBundle(fromBlob));
     }
   } catch {
     // Blob may be missing or unreachable; fall back to local defaults.
@@ -154,12 +162,12 @@ export async function getHomeCopy(): Promise<HomeCopyBundle> {
   try {
     const fromLocal = await readJson<StoredHomeCopy>(localHomeCopy);
     if (isCurrentHomeCopy(fromLocal)) {
-      return normalizeHomeCopyBundle(fromLocal);
+      return withLiveTraditional(normalizeHomeCopyBundle(fromLocal));
     }
   } catch {
     // Local file may be missing or still the previous draft.
   }
-  return normalizeHomeCopyBundle(null);
+  return withLiveTraditional(normalizeHomeCopyBundle(null));
 }
 
 export async function saveHomeCopy(bundle: HomeCopyBundle) {

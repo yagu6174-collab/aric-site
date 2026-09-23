@@ -4,10 +4,12 @@ import Link from "next/link";
 import type { Insight } from "@/types/insight";
 import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
+import { localizeInsights } from "@/lib/localize";
 import { formatDate } from "@/lib/utils";
 
 export function LatestInsights({ items }: { items: Insight[] }) {
   const { dict, locale } = useI18n();
+  const localized = localizeInsights(items, locale);
 
   return (
     <section className="essay-chapter">
@@ -19,7 +21,7 @@ export function LatestInsights({ items }: { items: Insight[] }) {
           <h2>{dict.home.latestTitle}</h2>
         </Reveal>
         <ul className="essay-article-list">
-          {items.slice(0, 3).map((item, index) => (
+          {localized.slice(0, 3).map((item, index) => (
             <li key={item.slug}>
               <Reveal delay={index * 0.06} className="overflow-hidden">
                 <Link href={`/insights/${encodeURIComponent(item.slug)}`}>

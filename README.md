@@ -54,6 +54,7 @@ Vercel 项目 → **Settings → Environment Variables**，确认有：
 |---|---|
 | `ADMIN_PASSWORD` | 线上后台密码，不要用 `aric-dev` |
 | `BLOB_READ_WRITE_TOKEN` | 创建 Blob 后一般会自动出现 |
+| `OPENAI_API_KEY` | 可选。设置后，主页文案保存时用它把简体同步成英文；不设则走公共翻译接口 |
 
 Production / Preview / Development 都勾上。改完变量后 **Redeploy** 一次。
 

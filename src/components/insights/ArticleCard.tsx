@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Insight } from "@/types/insight";
 import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
+import { localizeInsight } from "@/lib/localize";
 import { formatDate } from "@/lib/utils";
 
 export function ArticleCard({
@@ -14,18 +15,19 @@ export function ArticleCard({
   delay?: number;
 }) {
   const { dict, locale } = useI18n();
+  const localized = localizeInsight(item, locale);
 
   return (
     <li>
       <Reveal delay={delay} className="overflow-hidden">
         <Link href={`/insights/${encodeURIComponent(item.slug)}`}>
           <small>
-            {formatDate(item.date, locale)} · {item.readingMinutes}{" "}
-            {dict.insights.minRead} · {dict.insights.categories[item.category]}
+            {formatDate(localized.date, locale)} · {localized.readingMinutes}{" "}
+            {dict.insights.minRead} · {dict.insights.categories[localized.category]}
           </small>
-          <strong>{item.title}</strong>
-          <span>{item.excerpt}</span>
-          {item.quote ? <em>“{item.quote}”</em> : null}
+          <strong>{localized.title}</strong>
+          <span>{localized.excerpt}</span>
+          {localized.quote ? <em>“{localized.quote}”</em> : null}
         </Link>
       </Reveal>
     </li>

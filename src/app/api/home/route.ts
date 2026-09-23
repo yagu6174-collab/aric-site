@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
+import { dictionaries } from "@/i18n/dictionaries";
 import { getHomeCopy, saveHomeCopy } from "@/lib/content";
-import { normalizeHomeCopyBundle } from "@/lib/home-copy";
+import {
+  homeCopyFromDictionary,
+  normalizeHomeCopy,
+  normalizeHomeCopyBundle,
+} from "@/lib/home-copy";
+import { syncHomeCopyFromZhCN } from "@/lib/locale-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +23,20 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await request.json();
-  const saved = await saveHomeCopy(normalizeHomeCopyBundle(body));
-  return NextResponse.json(saved);
+  const incoming = normalizeHomeCopyBundle(body);
+  const zhCN = normalizeHomeCopy(
+    incoming["zh-CN"],
+    homeCopyFromDictionary(dictionaries["zh-CN"]),
+  );
+  try {
+    const synced = await syncHomeCopyFromZhCN(zhCN);
+    const saved = await saveHomeCopy(synced);
+    return NextResponse.json(saved);
+  } catch (error) {
+    console.error("[home-copy-sync]", error);
+    return NextResponse.json(
+      { error: "简体已读到，但英文同步失败，请稍后重试" },
+      { status: 502 },
+    );
+  }
 }
