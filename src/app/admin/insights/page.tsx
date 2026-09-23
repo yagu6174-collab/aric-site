@@ -4,11 +4,41 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import type { Insight, InsightCategory } from "@/types/insight";
+import type { ArticleBlock, Insight, InsightCategory } from "@/types/insight";
 import { INSIGHT_CATEGORIES } from "@/types/insight";
+
+function paragraphText(blocks: ArticleBlock[]) {
+  return blocks
+    .filter((block) => block.type === "p")
+    .map((block) => block.text)
+    .join("\n\n");
+}
+
+function composeBody(original: ArticleBlock[] | null, text: string): ArticleBlock[] {
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) => ({ type: "p" as const, text: item }));
+  if (!original || original.every((block) => block.type === "p")) return paragraphs;
+
+  const next: ArticleBlock[] = [];
+  let index = 0;
+  for (const block of original) {
+    if (block.type !== "p") {
+      next.push(block);
+      continue;
+    }
+    if (index < paragraphs.length) next.push(paragraphs[index]);
+    index += 1;
+  }
+  next.push(...paragraphs.slice(index));
+  return next;
+}
 
 export default function AdminInsightsPage() {
   const [items, setItems] = useState<Insight[]>([]);
+  const [editing, setEditing] = useState<Insight | null>(null);
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [quote, setQuote] = useState("");
@@ -34,27 +64,44 @@ export default function AdminInsightsPage() {
     })();
   }, [router]);
 
+  function resetForm() {
+    setEditing(null);
+    setTitle("");
+    setExcerpt("");
+    setQuote("");
+    setBody("");
+    setCategory("essay");
+  }
+
+  function beginEdit(item: Insight) {
+    setEditing(item);
+    setTitle(item.title);
+    setExcerpt(item.excerpt);
+    setQuote(item.quote);
+    setCategory(item.category);
+    setBody(paragraphText(item.body));
+    setMessage("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function save() {
     const res = await fetch("/api/insights", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        slug: editing?.slug,
+        date: editing?.date,
+        readingMinutes: editing?.readingMinutes,
         title,
         excerpt,
         quote,
         category,
-        body: body
-          .split(/\n{2,}/)
-          .filter(Boolean)
-          .map((text) => ({ type: "p", text })),
+        body: composeBody(editing?.body ?? null, body),
       }),
     });
-    setMessage(res.ok ? "已保存" : "保存失败，请先在后台首页登录");
+    setMessage(res.ok ? (editing ? "已更新" : "已保存") : "保存失败，请先在后台首页登录");
     if (res.ok) {
-      setTitle("");
-      setExcerpt("");
-      setQuote("");
-      setBody("");
+      resetForm();
       await load();
     }
   }
@@ -68,7 +115,17 @@ export default function AdminInsightsPage() {
   return (
     <div className="space-y-6">
       <Card className="space-y-3">
-        <h1 className="font-serif text-2xl">发布文章</h1>
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="font-serif text-2xl">{editing ? "编辑文章" : "发布文章"}</h1>
+          {editing ? (
+            <Button variant="ghost" onClick={resetForm}>
+              取消
+            </Button>
+          ) : null}
+        </div>
+        {editing ? (
+          <p className="text-sm text-[var(--muted)]">正在改「{editing.title}」。保存后仍是原来的文章。</p>
+        ) : null}
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -105,7 +162,7 @@ export default function AdminInsightsPage() {
           rows={8}
           className="w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2"
         />
-        <Button onClick={save}>保存</Button>
+        <Button onClick={save}>{editing ? "更新" : "保存"}</Button>
         {message ? <p className="text-sm text-[var(--muted)]">{message}</p> : null}
       </Card>
       <div className="space-y-3">
@@ -115,9 +172,14 @@ export default function AdminInsightsPage() {
               <p className="font-serif text-lg">{item.title}</p>
               <p className="text-xs text-[var(--muted)]">{item.slug}</p>
             </div>
-            <Button variant="ghost" onClick={() => remove(item.slug)}>
-              删除
-            </Button>
+            <div className="flex shrink-0 gap-2">
+              <Button variant="ghost" onClick={() => beginEdit(item)}>
+                编辑
+              </Button>
+              <Button variant="ghost" onClick={() => remove(item.slug)}>
+                删除
+              </Button>
+            </div>
           </Card>
         ))}
       </div>
