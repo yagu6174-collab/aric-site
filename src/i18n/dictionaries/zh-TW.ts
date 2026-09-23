@@ -54,6 +54,7 @@ export const zhTW = {
     },
     empty: "這一分類還沒有文章。",
     minRead: "min read",
+    charCount: "字",
     back: "返回見解列表",
   },
   about: {

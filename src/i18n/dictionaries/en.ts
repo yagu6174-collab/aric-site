@@ -54,6 +54,7 @@ export const en = {
     },
     empty: "No articles in this category yet.",
     minRead: "min read",
+    charCount: "characters",
     back: "Back to insights",
   },
   about: {

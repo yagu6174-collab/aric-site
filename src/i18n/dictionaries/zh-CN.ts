@@ -54,6 +54,7 @@ export const zhCN = {
     },
     empty: "这一分类还没有文章。",
     minRead: "min read",
+    charCount: "字",
     back: "返回见解列表",
   },
   about: {

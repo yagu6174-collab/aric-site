@@ -5,7 +5,7 @@ import type { Insight } from "@/types/insight";
 import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
 import { localizeInsights } from "@/lib/localize";
-import { formatDate } from "@/lib/utils";
+import { formatDate, insightCharCount } from "@/lib/utils";
 
 export function LatestInsights({ items }: { items: Insight[] }) {
   const { dict, locale } = useI18n();
@@ -26,8 +26,8 @@ export function LatestInsights({ items }: { items: Insight[] }) {
               <Reveal delay={index * 0.06} className="overflow-hidden">
                 <Link href={`/insights/${encodeURIComponent(item.slug)}`}>
                   <small>
-                    {formatDate(item.date, locale)} · {item.readingMinutes}{" "}
-                    {dict.insights.minRead} · {dict.insights.categories[item.category]}
+                    {formatDate(item.date, locale)} · {insightCharCount(item)}{" "}
+                    {dict.insights.charCount} · {dict.insights.categories[item.category]}
                   </small>
                   <strong>{item.title}</strong>
                   <span>{item.excerpt}</span>

@@ -13,6 +13,24 @@ export function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+import type { Insight } from "@/types/insight";
+
+export function insightCharCount(item: Pick<Insight, "body">) {
+  const parts: string[] = [];
+  for (const block of item.body) {
+    if (block.type === "p") parts.push(block.text);
+    if (block.type === "quote") {
+      parts.push(block.text);
+      if (block.cite) parts.push(block.cite);
+    }
+    if (block.type === "table") {
+      parts.push(...block.headers);
+      for (const row of block.rows) parts.push(...row);
+    }
+  }
+  return parts.join("").replace(/\s+/g, "").length;
+}
+
 export function formatDate(value: string, locale: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;

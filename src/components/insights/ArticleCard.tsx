@@ -5,7 +5,7 @@ import type { Insight } from "@/types/insight";
 import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
 import { localizeInsight } from "@/lib/localize";
-import { formatDate } from "@/lib/utils";
+import { formatDate, insightCharCount } from "@/lib/utils";
 
 export function ArticleCard({
   item,
@@ -22,8 +22,8 @@ export function ArticleCard({
       <Reveal delay={delay} className="overflow-hidden">
         <Link href={`/insights/${encodeURIComponent(item.slug)}`}>
           <small>
-            {formatDate(localized.date, locale)} · {localized.readingMinutes}{" "}
-            {dict.insights.minRead} · {dict.insights.categories[localized.category]}
+            {formatDate(localized.date, locale)} · {insightCharCount(item)}{" "}
+            {dict.insights.charCount} · {dict.insights.categories[localized.category]}
           </small>
           <strong>{localized.title}</strong>
           <span>{localized.excerpt}</span>

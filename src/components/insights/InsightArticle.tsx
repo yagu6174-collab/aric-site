@@ -6,7 +6,7 @@ import { ArticleBody } from "@/components/insights/ArticleBody";
 import { Disclaimer } from "@/components/insights/Disclaimer";
 import { useI18n } from "@/i18n/provider";
 import { localizeInsight } from "@/lib/localize";
-import { formatDate } from "@/lib/utils";
+import { formatDate, insightCharCount } from "@/lib/utils";
 
 export function InsightArticle({ item }: { item: Insight }) {
   const { dict, locale } = useI18n();
@@ -19,8 +19,8 @@ export function InsightArticle({ item }: { item: Insight }) {
           ← {dict.insights.back}
         </Link>
         <p className="essay-kicker essay-article-meta">
-          {formatDate(localized.date, locale)} · {localized.readingMinutes}{" "}
-          {dict.insights.minRead} · {dict.insights.categories[localized.category]}
+          {formatDate(localized.date, locale)} · {insightCharCount(item)}{" "}
+          {dict.insights.charCount} · {dict.insights.categories[localized.category]}
         </p>
         <h1>{localized.title}</h1>
         <p>{localized.excerpt}</p>
