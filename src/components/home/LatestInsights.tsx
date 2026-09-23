@@ -22,7 +22,7 @@ export function LatestInsights({ items }: { items: Insight[] }) {
           {items.slice(0, 3).map((item, index) => (
             <li key={item.slug}>
               <Reveal delay={index * 0.06} className="overflow-hidden">
-                <Link href={`/insights/${item.slug}`}>
+                <Link href={`/insights/${encodeURIComponent(item.slug)}`}>
                   <small>
                     {formatDate(item.date, locale)} · {item.readingMinutes}{" "}
                     {dict.insights.minRead} · {dict.insights.categories[item.category]}

@@ -191,7 +191,18 @@ export async function getInsights(): Promise<Insight[]> {
 
 export async function getInsight(slug: string) {
   const all = await getInsights();
-  return all.find((item) => item.slug === slug) ?? null;
+  const target = normalizeInsightSlug(slug);
+  return all.find((item) => normalizeInsightSlug(item.slug) === target) ?? null;
+}
+
+function normalizeInsightSlug(value: string) {
+  let next = value.trim();
+  try {
+    next = decodeURIComponent(next);
+  } catch {
+    // already decoded or malformed
+  }
+  return next.normalize("NFC");
 }
 
 export async function saveInsights(items: Insight[]) {

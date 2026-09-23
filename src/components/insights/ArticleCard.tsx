@@ -18,7 +18,7 @@ export function ArticleCard({
   return (
     <li>
       <Reveal delay={delay} className="overflow-hidden">
-        <Link href={`/insights/${item.slug}`}>
+        <Link href={`/insights/${encodeURIComponent(item.slug)}`}>
           <small>
             {formatDate(item.date, locale)} · {item.readingMinutes}{" "}
             {dict.insights.minRead} · {dict.insights.categories[item.category]}

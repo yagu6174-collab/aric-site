@@ -6,6 +6,7 @@ export function slugify(value: string) {
   return value
     .trim()
     .toLowerCase()
+    .normalize("NFC")
     .replace(/[\s_]+/g, "-")
     .replace(/[^\w\u4e00-\u9fff-]+/g, "")
     .replace(/-+/g, "-")
