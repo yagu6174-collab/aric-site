@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme inline {
   --color-ink: #121212;
   --color-paper: #faf8f5;
@@ -15,8 +13,7 @@
     "Noto Serif SC", serif;
 }
 
-:root,
-.light {
+:root {
   --bg: #faf8f5;
   --fg: #1a1916;
   --muted: #6b6862;
@@ -25,17 +22,6 @@
   --card: #ffffff;
   --accent: #1a1916;
   --accent-fg: #faf8f5;
-}
-
-.dark {
-  --bg: #121212;
-  --fg: #f4f1ea;
-  --muted: #a39e94;
-  --line: rgba(244, 241, 234, 0.12);
-  --glass: rgba(18, 18, 18, 0.7);
-  --card: #191919;
-  --accent: #f4f1ea;
-  --accent-fg: #121212;
 }
 
 html {
@@ -78,8 +64,7 @@ body {
   z-index: 0;
 }
 
-html:has(.essay-page),
-html.dark:has(.essay-page) {
+html:has(.essay-page) {
   color-scheme: light;
   background: #ebe4e0;
   --bg: #ebe4e0;

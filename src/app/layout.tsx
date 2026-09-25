@@ -42,16 +42,15 @@ export default async function RootLayout({
 }>) {
   const jar = await cookies();
   const locale = parseLocale(jar.get("locale")?.value);
-  const theme = jar.get("theme")?.value === "light" ? "light" : "dark";
   const homeCopy = await getHomeCopy();
 
   return (
     <html
       lang={locale}
-      className={cn(theme, newsreader.variable, notoSerif.variable, robotoMono.variable)}
+      className={cn(newsreader.variable, notoSerif.variable, robotoMono.variable)}
     >
       <body className="min-h-screen antialiased">
-        <Providers locale={locale} theme={theme} homeCopy={homeCopy}>
+        <Providers locale={locale} homeCopy={homeCopy}>
           <Header />
           <main className="site-main">{children}</main>
           <Footer />

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Container } from "@/components/ui/Container";
 import { useI18n } from "@/i18n/provider";
 import { cn } from "@/lib/utils";
@@ -51,7 +50,6 @@ export function Header() {
           </nav>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
-            <ThemeToggle />
             <button
               type="button"
               className="md:hidden"
