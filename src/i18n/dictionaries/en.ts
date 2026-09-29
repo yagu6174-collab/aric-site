@@ -74,7 +74,9 @@ export const en = {
     qrAlt: "WeChat QR placeholder",
   },
   footer: {
-    rights: "Independent notes. Personal views.",
+    label: "Disclaimer:",
+    rights:
+      "All content on this site, including the personal introduction, essays, videos, and any information related to insurance companies, reflects personal opinions and views only. It does not represent the official position, policy, or commitment of any insurance company or institution. The site shares personal professional views, and is not business promotion or investment advice. Any decision based on information here should be verified independently. No insurance company or institution bears responsibility for it.",
   },
   admin: {
     title: "Studio desk",

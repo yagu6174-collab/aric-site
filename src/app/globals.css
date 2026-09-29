@@ -599,13 +599,28 @@ html:has(.essay-page) .site-header button {
 html:has(.essay-page) footer {
   border-color: var(--hair);
   margin-top: 0;
-  font-size: 13px;
-  color: var(--faint);
+  color: var(--muted);
+}
+
+.essay-disclaimer {
+  max-width: 36.75rem;
+  margin: 0 auto 0 8vw;
+  padding: 2.2rem 1.5rem 3rem;
+  text-align: left;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.essay-disclaimer p:first-child {
+  margin-bottom: 0.75rem;
+  color: var(--fg);
 }
 
 @media (max-width: 900px) {
   .essay-prose,
-  .essay-index {
+  .essay-index,
+  .essay-disclaimer {
     margin-left: auto;
     margin-right: auto;
   }

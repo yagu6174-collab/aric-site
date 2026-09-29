@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Container } from "@/components/ui/Container";
 import { useI18n } from "@/i18n/provider";
 
 export function Footer() {
@@ -11,9 +10,10 @@ export function Footer() {
 
   return (
     <footer className="mt-24 border-t border-[var(--line)]">
-      <Container className="py-10 text-center text-sm text-[var(--muted)]">
+      <div className="essay-disclaimer">
+        <p>{dict.footer.label}</p>
         <p>{dict.footer.rights}</p>
-      </Container>
+      </div>
     </footer>
   );
 }
