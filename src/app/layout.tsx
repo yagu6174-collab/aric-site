@@ -32,7 +32,7 @@ const robotoMono = Roboto_Mono({
 
 export const metadata: Metadata = {
   title: "陆恩惠 Aric",
-  description: "理财见解、履历与摄影自留地",
+  description: "理财见解、履历与联系",
 };
 
 export default async function RootLayout({

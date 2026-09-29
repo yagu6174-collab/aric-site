@@ -93,7 +93,7 @@ export default function AdminHomePage() {
           {busy ? "退出中…" : "退出"}
         </Button>
       </Card>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Link href="/admin/home">
           <Card className="h-full transition hover:border-[var(--fg)]">
             <p className="font-serif text-xl">主页文案</p>
@@ -107,14 +107,6 @@ export default function AdminHomePage() {
             <p className="font-serif text-xl">编辑理财文章</p>
             <p className="mt-2 text-sm text-[var(--muted)]">
               发布或删除见解，保存后前台会更新。
-            </p>
-          </Card>
-        </Link>
-        <Link href="/admin/photography">
-          <Card className="h-full transition hover:border-[var(--fg)]">
-            <p className="font-serif text-xl">上传摄影作品</p>
-            <p className="mt-2 text-sm text-[var(--muted)]">
-              上传照片、填写影集名和旁白。
             </p>
           </Card>
         </Link>

@@ -11,7 +11,6 @@ export type HomeContent = {
   heroTitle: string;
   heroSubtitle: string;
   philosophies: { title: string; body: string }[];
-  photoBanner: string;
 };
 
 export type AboutContent = {

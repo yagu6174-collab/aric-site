@@ -1,6 +1,6 @@
 # 陆恩惠 Aric · 个人工作室站点
 
-Next.js App Router 个人站：工作室首页、理财见解、履历、摄影画廊、联系页，以及可登录的后台上传。
+Next.js App Router 个人站：工作室首页、理财见解、履历、联系页，以及可登录的后台。
 
 ## 本地运行
 
@@ -16,16 +16,16 @@ npm run dev
 后台：http://localhost:3000/admin  
 本地密码见 `.env.local` 的 `ADMIN_PASSWORD`（开发默认是 `aric-dev`，上线必须改掉）。
 
-## 接到 GitHub 之后怎么更新照片
+## 接到 GitHub 之后怎么更新内容
 
-GitHub 只保存网站程序。照片和文章在 **Vercel 上线后的后台** 上传，不会进仓库。
+GitHub 只保存网站程序。文章在 **Vercel 上线后的后台** 发布，不会进仓库。
 
 1. 打开线上地址：`https://你的域名/admin`（不要用 localhost）
 2. 用 Vercel 里设置的 `ADMIN_PASSWORD` 登录
-3. 「上传摄影作品」选图、填影集名和旁白
-4. 保存后 `/photography` 会马上更新，不用再 `git push`
+3. 「编辑理财文章」发布或修改见解
+4. 保存后前台会马上更新，不用再 `git push`
 
-发理财文章同样走 `/admin`。
+主页文案同样走 `/admin/home`。
 
 ## 部署到 Vercel（按顺序做一次）
 
@@ -38,9 +38,9 @@ GitHub 只保存网站程序。照片和文章在 **Vercel 上线后的后台** 
 1. 打开 [https://vercel.com](https://vercel.com) 并登录（可用 GitHub 账号）
 2. **Add New → Project**，选中这个仓库
 3. Framework 会识别为 Next.js，保持默认即可
-4. 先点 Deploy（此时后台还不能真正存照片）
+4. 先点 Deploy
 
-### 3. 打开 Blob 图床
+### 3. 打开 Blob 存储（存文章与主页文案）
 
 1. Vercel 项目页 → **Storage** → 创建 **Blob**
 2. 把它连接到当前项目
@@ -60,7 +60,7 @@ Production / Preview / Development 都勾上。改完变量后 **Redeploy** 一�
 
 ### 5. 以后只做这件事
 
-打开 `https://你的项目.vercel.app/admin` 上传即可。
+打开 `https://你的项目.vercel.app/admin` 更新即可。
 
 ## 上线前请替换的占位
 

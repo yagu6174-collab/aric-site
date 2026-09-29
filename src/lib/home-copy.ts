@@ -7,12 +7,7 @@ import type {
   HomeStudioKey,
 } from "@/types/home-copy";
 
-const STUDIO_KEYS: HomeStudioKey[] = [
-  "insights",
-  "about",
-  "photography",
-  "contact",
-];
+const STUDIO_KEYS: HomeStudioKey[] = ["insights", "about", "contact"];
 
 function text(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value : fallback;
@@ -34,7 +29,6 @@ type CopySource = {
     studioLabel: string;
     studioHint: string;
     latestTitle: string;
-    photoBanner: string;
   };
   studio: HomeCopy["studio"];
   philosophies: readonly { title: string; body: string }[];
@@ -51,15 +45,13 @@ export function homeCopyFromDictionary(dict: CopySource): HomeCopy {
     studio: {
       insights: { ...dict.studio.insights },
       about: { ...dict.studio.about },
-      photography: { ...dict.studio.photography },
       contact: { ...dict.studio.contact },
     },
     latestTitle: dict.home.latestTitle,
-    photoBanner: dict.home.photoBanner,
   };
 }
 
-export const HOME_COPY_REVISION = 2;
+export const HOME_COPY_REVISION = 3;
 
 export function defaultHomeCopyBundle(): HomeCopyBundle {
   return {
@@ -103,7 +95,6 @@ export function normalizeHomeCopy(raw: unknown, fallback: HomeCopy): HomeCopy {
       ]),
     ) as HomeCopy["studio"],
     latestTitle: text(input.latestTitle, fallback.latestTitle),
-    photoBanner: text(input.photoBanner, fallback.photoBanner),
   };
 }
 
@@ -135,7 +126,6 @@ export function applyHomeCopy(
       studioLabel: copy.studioLabel,
       studioHint: copy.studioHint,
       latestTitle: copy.latestTitle,
-      photoBanner: copy.photoBanner,
     },
     studio: copy.studio,
     philosophies: copy.philosophies.length ? copy.philosophies : dict.philosophies,

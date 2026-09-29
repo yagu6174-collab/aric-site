@@ -18,7 +18,6 @@ export function Header() {
     { href: "/", label: dict.nav.home },
     { href: "/insights", label: dict.nav.insights },
     { href: "/about", label: dict.nav.about },
-    { href: "/photography", label: dict.nav.photography },
     { href: "/contact", label: dict.nav.contact },
   ];
 

@@ -300,18 +300,12 @@ export default function AdminHomeCopyPage() {
       </Card>
 
       <Card className="space-y-4">
-        <h2 className="font-serif text-xl">章节 02 与摄影入口</h2>
+        <h2 className="font-serif text-xl">章节 02</h2>
         <Field
           label="最新见解标题"
           value={copy.latestTitle}
           readOnly={readOnly}
           onChange={(latestTitle) => update({ latestTitle })}
-        />
-        <Field
-          label="摄影入口那句"
-          value={copy.photoBanner}
-          readOnly={readOnly}
-          onChange={(photoBanner) => update({ photoBanner })}
         />
       </Card>
 
