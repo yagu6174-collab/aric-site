@@ -151,9 +151,7 @@ html[lang="en"] .essay-hero-title {
 }
 
 .essay-queue {
-  position: sticky;
-  top: 3.55rem;
-  z-index: 25;
+  position: relative;
   overflow: hidden;
   height: var(--queue-h, 8.9rem);
   background: var(--bg);
