@@ -10,6 +10,7 @@ import { formatDate, insightCharCount } from "@/lib/utils";
 export function LatestInsights({ items }: { items: Insight[] }) {
   const { dict, locale } = useI18n();
   const localized = localizeInsights(items, locale);
+  if (!localized.length) return null;
 
   return (
     <section className="essay-chapter">

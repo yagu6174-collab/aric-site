@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthed } from "@/lib/auth";
-import { getInsights, saveInsights } from "@/lib/content";
+import { getInsights, normalizeInsightSlug, saveInsights } from "@/lib/content";
 import type { Insight } from "@/types/insight";
 import { slugify } from "@/lib/utils";
 
@@ -15,11 +15,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = (await request.json()) as Partial<Insight>;
-  if (!body.title || !body.excerpt) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  if (!body.title?.trim() || !body.excerpt?.trim()) {
+    return NextResponse.json({ error: "标题和摘要都要填" }, { status: 400 });
   }
   const items = await getInsights();
-  const slug = body.slug?.trim() || slugify(body.title);
+  const slug = normalizeInsightSlug(body.slug?.trim() || slugify(body.title));
+  if (!slug) {
+    return NextResponse.json({ error: "这个标题没法生成链接" }, { status: 400 });
+  }
   const next: Insight = {
     slug,
     title: body.title,
@@ -30,7 +33,10 @@ export async function POST(request: Request) {
     quote: body.quote || body.excerpt,
     body: body.body?.length ? body.body : [{ type: "p", text: body.excerpt }],
   };
-  const merged = [next, ...items.filter((item) => item.slug !== slug)];
+  const merged = [
+    next,
+    ...items.filter((item) => normalizeInsightSlug(item.slug) !== slug),
+  ];
   await saveInsights(merged);
   return NextResponse.json(next);
 }
@@ -41,8 +47,15 @@ export async function DELETE(request: Request) {
   }
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get("slug");
-  if (!slug) return NextResponse.json({ error: "Missing slug" }, { status: 400 });
+  if (!slug?.trim()) {
+    return NextResponse.json({ error: "没有要删除的文章" }, { status: 400 });
+  }
+  const target = normalizeInsightSlug(slug);
   const items = await getInsights();
-  await saveInsights(items.filter((item) => item.slug !== slug));
+  const next = items.filter((item) => normalizeInsightSlug(item.slug) !== target);
+  if (next.length === items.length) {
+    return NextResponse.json({ error: "没有找到这篇文章" }, { status: 404 });
+  }
+  await saveInsights(next);
   return NextResponse.json({ ok: true });
 }

@@ -17,6 +17,11 @@ const root = process.cwd();
 const dataDir = path.join(root, ".data");
 const insightsSeedDir = path.join(root, "content", "insights");
 const localInsights = path.join(dataDir, "insights.json");
+const retiredInsightSlugs = new Set([
+  "long-horizon",
+  "risk-before-return",
+  "family-cashflow",
+]);
 const localHomeCopy = path.join(dataDir, "home-copy.json");
 
 async function readJson<T>(file: string): Promise<T> {
@@ -75,7 +80,12 @@ function blobAuthHeaders(): HeadersInit | undefined {
 }
 
 async function seedInsights(): Promise<Insight[]> {
-  const files = await readdir(insightsSeedDir);
+  let files: string[] = [];
+  try {
+    files = await readdir(insightsSeedDir);
+  } catch {
+    return [];
+  }
   const items: Insight[] = [];
   for (const file of files) {
     if (!file.endsWith(".json")) continue;
@@ -138,14 +148,20 @@ export async function getAbout(): Promise<AboutContent> {
   return readJson<AboutContent>(path.join(root, "content", "about.json"));
 }
 
+function withoutRetiredInsights(items: Insight[]) {
+  return items
+    .filter((item) => !retiredInsightSlugs.has(normalizeInsightSlug(item.slug)))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 export async function getInsights(): Promise<Insight[]> {
   const fromBlob = await readBlobJson<Insight[]>("content/insights.json");
-  if (fromBlob) return fromBlob.sort((a, b) => b.date.localeCompare(a.date));
+  if (fromBlob) return withoutRetiredInsights(fromBlob);
   try {
     const local = await readJson<Insight[]>(localInsights);
-    return local.sort((a, b) => b.date.localeCompare(a.date));
+    return withoutRetiredInsights(local);
   } catch {
-    return seedInsights();
+    return withoutRetiredInsights(await seedInsights());
   }
 }
 
@@ -155,7 +171,7 @@ export async function getInsight(slug: string) {
   return all.find((item) => normalizeInsightSlug(item.slug) === target) ?? null;
 }
 
-function normalizeInsightSlug(value: string) {
+export function normalizeInsightSlug(value: string) {
   let next = value.trim();
   try {
     next = decodeURIComponent(next);
@@ -166,7 +182,7 @@ function normalizeInsightSlug(value: string) {
 }
 
 export async function saveInsights(items: Insight[]) {
-  const sorted = [...items].sort((a, b) => b.date.localeCompare(a.date));
+  const sorted = withoutRetiredInsights(items);
   if (hasBlobToken()) {
     await writeBlobJson("content/insights.json", sorted);
     return sorted;
