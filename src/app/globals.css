@@ -480,6 +480,78 @@ a.essay-kicker {
   margin-top: 2.4rem;
 }
 
+.essay-reading {
+  padding-top: 2.4rem;
+  padding-bottom: 5rem;
+}
+
+.essay-reading .essay-prose {
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.essay-reading .essay-kicker {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.essay-reading a.essay-kicker {
+  margin-bottom: 2.6rem;
+}
+
+.essay-reading .essay-prose h1 {
+  margin: 0 0 0.9rem;
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.essay-reading .essay-article-meta {
+  margin: 0 0 2.6rem;
+  text-align: center;
+}
+
+.essay-reading-lead {
+  margin: 0 0 1.6rem;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.essay-reading .essay-article-body {
+  margin-top: 0;
+}
+
+.essay-reading .essay-article-body p {
+  margin-bottom: 0;
+  text-indent: 2em;
+  font-size: 1.125rem;
+  line-height: 2;
+  color: var(--fg);
+}
+
+.essay-reading .essay-article-body p + p {
+  margin-top: 0.15em;
+}
+
+.essay-reading .essay-article-body blockquote {
+  margin: 1.5em 0 1.5em 2em;
+  padding-left: 0.85rem;
+  text-indent: 0;
+  font-size: 1.125rem;
+  line-height: 1.9;
+}
+
+.essay-reading .essay-article-body + .essay-note {
+  margin-top: 3rem;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
 .essay-story {
   margin-top: 0.4rem;
 }
