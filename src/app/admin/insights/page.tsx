@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { zhCN } from "@/i18n/dictionaries/zh-CN";
+import { formatImportedArticle } from "@/lib/format-import";
 import type { ArticleBlock, Insight, InsightCategory } from "@/types/insight";
 import { INSIGHT_CATEGORIES } from "@/types/insight";
 import { slugify } from "@/lib/utils";
@@ -66,6 +67,7 @@ export default function AdminInsightsPage() {
   const [date, setDate] = useState(today);
   const [blocks, setBlocks] = useState<ArticleBlock[]>([emptyParagraph()]);
   const [category, setCategory] = useState<InsightCategory>("essay");
+  const [importText, setImportText] = useState("");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   const router = useRouter();
@@ -96,6 +98,7 @@ export default function AdminInsightsPage() {
     setDate(today());
     setBlocks([emptyParagraph()]);
     setCategory("essay");
+    setImportText("");
   }
 
   function beginEdit(item: Insight) {
@@ -108,6 +111,23 @@ export default function AdminInsightsPage() {
     setBlocks(item.body.length ? item.body : [emptyParagraph()]);
     setMessage("");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function applyImport() {
+    const formatted = formatImportedArticle(importText);
+    const usable = formatted.blocks.some((block) => block.type !== "p" || block.text.trim());
+    if (!usable) {
+      setMessage("没有整理出段落");
+      return;
+    }
+    const hasBody = cleanBlocks(blocks).length > 0;
+    if (hasBody && !window.confirm("整理会盖掉现在的正文，确定吗？")) return;
+    if (!title.trim() && formatted.title) setTitle(formatted.title);
+    if (!excerpt.trim() && formatted.excerpt) setExcerpt(formatted.excerpt);
+    if (!quote.trim() && formatted.quote) setQuote(formatted.quote);
+    setBlocks(formatted.blocks);
+    setImportText("");
+    setMessage(`已分成 ${cleanBlocks(formatted.blocks).length} 段，可以再改。`);
   }
 
   function updateBlock(index: number, block: ArticleBlock) {
@@ -228,6 +248,21 @@ export default function AdminInsightsPage() {
           placeholder="核心金句"
           className="w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2"
         />
+        <div className="space-y-2 rounded-xl border border-dashed border-[var(--line)] p-3">
+          <p className="text-sm text-[var(--muted)]">
+            把从别处复制的文字贴在这里。空行分成段，没写完的一行会接到下一行；短的第一行填进标题，引号里的短句变成引文。
+          </p>
+          <textarea
+            value={importText}
+            onChange={(event) => setImportText(event.target.value)}
+            placeholder="整篇贴进来"
+            rows={6}
+            className="w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2"
+          />
+          <Button variant="ghost" onClick={applyImport} disabled={pending || !importText.trim()}>
+            整理成分段
+          </Button>
+        </div>
         <div className="space-y-3">
           {blocks.map((block, index) => (
             <div key={index} className="space-y-2 rounded-xl border border-[var(--line)] p-3">
