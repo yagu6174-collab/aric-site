@@ -5,9 +5,11 @@ import Image from "next/image";
 import { useState } from "react";
 import type { SiteProfile } from "@/types/site";
 import { useI18n } from "@/i18n/provider";
+import { localizeSite } from "@/lib/localize";
 
-export function ContactArchive({ site }: { site: SiteProfile }) {
-  const { dict } = useI18n();
+export function ContactArchive({ site: profile }: { site: SiteProfile }) {
+  const { dict, locale } = useI18n();
+  const site = localizeSite(profile, locale);
   const [copied, setCopied] = useState(false);
 
   async function copy() {

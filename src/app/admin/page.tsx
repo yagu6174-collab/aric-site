@@ -110,6 +110,22 @@ export default function AdminHomePage() {
             </p>
           </Card>
         </Link>
+        <Link href="/admin/about">
+          <Card className="h-full transition hover:border-[var(--fg)]">
+            <p className="font-serif text-xl">个人介绍</p>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              改服务理念、教育、履历和技能。
+            </p>
+          </Card>
+        </Link>
+        <Link href="/admin/contact">
+          <Card className="h-full transition hover:border-[var(--fg)]">
+            <p className="font-serif text-xl">联系方式</p>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              改微信号、邮箱、城市和其他链接。
+            </p>
+          </Card>
+        </Link>
       </div>
     </div>
   );

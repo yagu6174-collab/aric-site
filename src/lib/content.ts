@@ -23,6 +23,8 @@ const retiredInsightSlugs = new Set([
   "family-cashflow",
 ]);
 const localHomeCopy = path.join(dataDir, "home-copy.json");
+const localAbout = path.join(dataDir, "about.json");
+const localSite = path.join(dataDir, "site.json");
 
 async function readJson<T>(file: string): Promise<T> {
   return JSON.parse(await readFile(file, "utf8")) as T;
@@ -94,8 +96,107 @@ async function seedInsights(): Promise<Insight[]> {
   return items.sort((a, b) => b.date.localeCompare(a.date));
 }
 
+function asText(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function asTimeline(value: unknown): AboutContent["education"] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      const row =
+        item && typeof item === "object" ? (item as Record<string, unknown>) : {};
+      return {
+        period: asText(row.period),
+        title: asText(row.title),
+        detail: asText(row.detail),
+      };
+    })
+    .filter((item) => item.period || item.title || item.detail);
+}
+
+export function normalizeAbout(raw: unknown): AboutContent {
+  const source =
+    raw && typeof raw === "object" ? (raw as Partial<AboutContent>) : {};
+  return {
+    story: Array.isArray(source.story)
+      ? source.story.map((item) => asText(item)).filter(Boolean)
+      : [],
+    education: asTimeline(source.education),
+    career: asTimeline(source.career),
+    skills: Array.isArray(source.skills)
+      ? source.skills.map((item) => asText(item)).filter(Boolean)
+      : [],
+  };
+}
+
+export function normalizeSite(raw: unknown): SiteProfile {
+  const source =
+    raw && typeof raw === "object" ? (raw as Partial<SiteProfile>) : {};
+  const socials = Array.isArray(source.socials)
+    ? source.socials
+        .map((item) => {
+          const row =
+            item && typeof item === "object"
+              ? (item as Record<string, unknown>)
+              : {};
+          return { label: asText(row.label), href: asText(row.href) };
+        })
+        .filter((item) => item.href)
+    : [];
+  return {
+    name: asText(source.name) || "陆恩惠",
+    nameEn: asText(source.nameEn) || "Aric",
+    wechat: asText(source.wechat),
+    email: asText(source.email),
+    city: asText(source.city),
+    socials,
+  };
+}
+
+async function readStored<T>(
+  blobPath: string,
+  localPath: string,
+  fallbackPath: string,
+  normalize: (raw: unknown) => T,
+): Promise<T> {
+  noStore();
+  try {
+    const fromBlob = await readBlobJson<unknown>(blobPath);
+    if (fromBlob) return normalize(fromBlob);
+  } catch {
+    // Blob may be missing; fall through.
+  }
+  try {
+    return normalize(await readJson<unknown>(localPath));
+  } catch {
+    // Local override may be missing.
+  }
+  return normalize(await readJson<unknown>(fallbackPath));
+}
+
+async function writeStored(blobPath: string, localPath: string, data: unknown) {
+  if (hasBlobToken()) {
+    await writeBlobJson(blobPath, data);
+    return;
+  }
+  await ensureDataDir();
+  await writeFile(localPath, JSON.stringify(data, null, 2), "utf8");
+}
+
 export async function getSite(): Promise<SiteProfile> {
-  return readJson<SiteProfile>(path.join(root, "content", "site.json"));
+  return readStored(
+    "content/site.json",
+    localSite,
+    path.join(root, "content", "site.json"),
+    normalizeSite,
+  );
+}
+
+export async function saveSite(raw: unknown) {
+  const next = normalizeSite(raw);
+  await writeStored("content/site.json", localSite, next);
+  return next;
 }
 
 export async function getHome(): Promise<HomeContent> {
@@ -145,7 +246,18 @@ export async function saveHomeCopy(bundle: HomeCopyBundle) {
 }
 
 export async function getAbout(): Promise<AboutContent> {
-  return readJson<AboutContent>(path.join(root, "content", "about.json"));
+  return readStored(
+    "content/about.json",
+    localAbout,
+    path.join(root, "content", "about.json"),
+    normalizeAbout,
+  );
+}
+
+export async function saveAbout(raw: unknown) {
+  const next = normalizeAbout(raw);
+  await writeStored("content/about.json", localAbout, next);
+  return next;
 }
 
 function withoutRetiredInsights(items: Insight[]) {
