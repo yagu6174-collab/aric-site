@@ -4,8 +4,8 @@ export const zhTW = {
   nav: {
     home: "首頁",
     insights: "理財見解",
-    about: "關於與履歷",
-    contact: "聯繫",
+    about: "個人介紹",
+    contact: "聯繫方式",
   },
   home: {
     heroTitle: "越害怕風險，越需要保險",
@@ -55,7 +55,7 @@ export const zhTW = {
     back: "返回見解列表",
   },
   about: {
-    title: "關於與履歷",
+    title: "個人介紹",
     storyTitle: "服務理念",
     portraitAlt: "陸恩惠肖像佔位",
     education: "教育背景",
@@ -63,7 +63,7 @@ export const zhTW = {
     skills: "專業技能",
   },
   contact: {
-    title: "聯繫",
+    title: "聯繫方式",
     wechat: "微信號",
     copy: "一鍵複製",
     copied: "已複製",

@@ -55,7 +55,7 @@ export const en = {
     back: "Back to insights",
   },
   about: {
-    title: "About & resume",
+    title: "Introduction",
     storyTitle: "How I work",
     portraitAlt: "Portrait placeholder for Aric",
     education: "Education",

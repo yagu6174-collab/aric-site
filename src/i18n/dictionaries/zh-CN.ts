@@ -4,8 +4,8 @@ export const zhCN = {
   nav: {
     home: "首页",
     insights: "理财见解",
-    about: "关于与履历",
-    contact: "联系",
+    about: "个人介绍",
+    contact: "联系方式",
   },
   home: {
     heroTitle: "越害怕风险，越需要保险",
@@ -55,7 +55,7 @@ export const zhCN = {
     back: "返回见解列表",
   },
   about: {
-    title: "关于与履历",
+    title: "个人介绍",
     storyTitle: "服务理念",
     portraitAlt: "陆恩惠肖像占位",
     education: "教育背景",
@@ -63,7 +63,7 @@ export const zhCN = {
     skills: "专业技能",
   },
   contact: {
-    title: "联系",
+    title: "联系方式",
     wechat: "微信号",
     copy: "一键复制",
     copied: "已复制",

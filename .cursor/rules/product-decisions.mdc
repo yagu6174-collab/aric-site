@@ -1,0 +1,24 @@
+---
+description: 已经定下来的产品决定，以及改动时容易踩的坑
+alwaysApply: true
+---
+
+# 已定产品
+
+纸面浅色，固定白天。不要加回白天/黑夜切换。
+
+不要加回「摄影自留地」：没有前台页、导航、首页横幅，也没有后台摄影。
+
+首页是随笔，不是宣传册。旧的 Blob 首页文案会被修订号挡住；要让新默认文案生效，才提高 `HOME_COPY_REVISION`。
+
+文章显示字数（`N 字` / characters），不要改回阅读分钟数。
+
+中文 slug 要能打开。链接用 `encodeURIComponent`，读取用 `normalizeInsightSlug` / `decodeURIComponent`。
+
+后台首页只编辑简体。保存后繁体用 OpenCC 同步，英文在保存时翻译（有 `OPENAI_API_KEY` 用它，否则走公共翻译）。
+
+页脚是免责声明，不要改回「个人观点，独立记录。」简体正文以词典 `zh-CN.ts` 的 `footer.rights` 为准。
+
+改 `src/app/globals.css` 时用无 BOM 的 UTF-8。PowerShell `Set-Content -Encoding utf8` 会写入 BOM，导致生产构建报 CSS 解析错误。
+
+和 stevenwang.me 对照过（客户视角，2026-09-29）：吉力靠脸、资历和大量具体文章被记住，但首页同时在招人。本站的优势是第一句话就在说客户怕的那笔损失。缺的是本人的脸，以及关于页仍是占位的履历。不要把首页改成颁奖舞台或招募页。

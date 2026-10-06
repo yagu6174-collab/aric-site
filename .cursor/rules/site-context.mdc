@@ -1,0 +1,25 @@
+---
+description: 陆恩惠站点是什么、改完怎么上线、哪些不能碰
+alwaysApply: true
+---
+
+# 陆恩惠 Aric 站点
+
+个人理财顾问站。线上 https://aric-site.vercel.app ，仓库 yagu6174-collab/aric-site，分支 main。
+
+技术：Next.js 15 App Router、Tailwind v4、Vercel Blob（文章与首页文案）。页面：`/` 随笔首页、`/insights`、`/about`、`/contact`。后台：`/admin`、`/admin/home`、`/admin/insights`。
+
+关键文件：
+
+- 首页文案默认与修订号：`src/lib/home-copy.ts`（`HOME_COPY_REVISION`）
+- 简繁英词典：`src/i18n/dictionaries/`。繁体运行时由简体经 OpenCC 生成，见 `src/i18n/dictionaries/index.ts`
+- 文章与首页读取：`src/lib/content.ts`
+- 页脚免责声明：`src/components/layout/Footer.tsx` 与词典 `footer`
+
+上线：只有用户明确说「上线」才 commit 并 push 到 main。Vercel 会自动部署。平时只改本地。
+
+生产构建必须是 `next build`（webpack）。不要改回 `next build --turbopack`，Vercel 上 Turbopack 会在 Google 字体处失败。
+
+不要把 `.env`、`.env.local` 写进 git。不要在对话里复述后台密码。密码只在环境变量 `ADMIN_PASSWORD` 里。
+
+不要自行加功能、版块或文案。关于页里的「占位」不要编造成真实履历。
