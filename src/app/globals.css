@@ -567,22 +567,50 @@ a.essay-kicker {
 }
 
 .essay-timeline {
-  margin-top: 2.8rem;
+  margin-top: 3.2rem;
 }
 
-.essay-skills {
+.essay-timeline h2 {
+  margin-bottom: 1rem;
+}
+
+.essay-records {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hair);
+}
+
+.essay-records li {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 1.15rem;
-  margin-top: 1.2rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.15rem 0 1.2rem;
+  border-bottom: 1px solid var(--hair);
 }
 
-.essay-skills li {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
+.essay-records small {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: var(--faint);
+}
+
+.essay-records strong {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.essay-records span {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0;
+  white-space: pre-line;
+  color: var(--fg);
 }
 
 .essay-wechat {

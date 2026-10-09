@@ -8,9 +8,11 @@ export function SkillTags({ skills }: { skills: string[] }) {
   return (
     <section className="essay-timeline">
       <h2>{dict.about.skills}</h2>
-      <ul className="essay-skills">
+      <ul className="essay-records">
         {skills.map((skill) => (
-          <li key={skill}>{skill}</li>
+          <li key={skill}>
+            <span>{skill}</span>
+          </li>
         ))}
       </ul>
     </section>
