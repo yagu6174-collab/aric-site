@@ -15,10 +15,10 @@ export function StorySplit({ story }: { story: AboutContent["story"] }) {
       ))}
       <div className="essay-portrait">
         <Image
-          src="/placeholders/portrait.svg"
+          src="/placeholders/portrait.png"
           alt={dict.about.portraitAlt}
-          width={720}
-          height={900}
+          width={831}
+          height={619}
         />
       </div>
     </div>

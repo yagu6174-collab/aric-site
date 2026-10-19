@@ -57,7 +57,7 @@ export const zhTW = {
   about: {
     title: "個人介紹",
     storyTitle: "服務理念",
-    portraitAlt: "陸恩惠肖像佔位",
+    portraitAlt: "陸恩惠",
     education: "教育背景",
     career: "職業履歷",
     skills: "專業技能",

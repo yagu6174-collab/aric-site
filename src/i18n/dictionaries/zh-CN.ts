@@ -57,7 +57,7 @@ export const zhCN = {
   about: {
     title: "个人介绍",
     storyTitle: "服务理念",
-    portraitAlt: "陆恩惠肖像占位",
+    portraitAlt: "陆恩惠",
     education: "教育背景",
     career: "职业履历",
     skills: "专业技能",
