@@ -1,25 +1,17 @@
----
-description: 陆恩惠站点是什么、改完怎么上线、哪些不能碰
-alwaysApply: true
----
-
 # 陆恩惠 Aric 站点
 
-个人理财顾问站。线上 https://aric-site.vercel.app ，仓库 yagu6174-collab/aric-site，分支 main。
+个人理财顾问站。线上 https://aric-site.vercel.app ，仓库 yagu6174-collab/aric-site。
 
-技术：Next.js 15 App Router、Tailwind v4、Vercel Blob（文章与首页文案）。页面：`/` 随笔首页、`/insights`、`/about`、`/contact`。后台：`/admin`、`/admin/home`、`/admin/insights`。
+技术：Next.js 15 App Router、Tailwind v4、静态导出（`output: 'export'`，产物 `out/`）。页面：`/`、`/insights`、`/insights/[slug]`、`/about`、`/contact`。
 
-关键文件：
+文案在仓库里，不在 Blob，也没有后台：
 
-- 首页文案默认与修订号：`src/lib/home-copy.ts`（`HOME_COPY_REVISION`）
-- 简繁英词典：`src/i18n/dictionaries/`。繁体运行时由简体经 OpenCC 生成，见 `src/i18n/dictionaries/index.ts`
-- 文章与首页读取：`src/lib/content.ts`
+- 首页与界面：`src/i18n/dictionaries/`。繁体运行时由简体经 OpenCC 生成，见 `src/i18n/dictionaries/index.ts`
+- 介绍、联系、文章：`content/about.json`、`content/site.json`、`content/insights/`
 - 页脚免责声明：`src/components/layout/Footer.tsx` 与词典 `footer`
 
-上线：只有用户明确说「上线」才 commit 并 push 到 main。Vercel 会自动部署。平时只改本地。
+生产构建必须是 `next build`（webpack）。不要改回 `next build --turbopack`，也不要加回需要服务器的后台、登录或 Blob。
 
-生产构建必须是 `next build`（webpack）。不要改回 `next build --turbopack`，Vercel 上 Turbopack 会在 Google 字体处失败。
+上线：只有用户明确说「上线」才把改动合并进 main。平时走分支。
 
-不要把 `.env`、`.env.local` 写进 git。不要在对话里复述后台密码。密码只在环境变量 `ADMIN_PASSWORD` 里。
-
-不要自行加功能、版块或文案。关于页里的「占位」不要编造成真实履历。
+不要自行加功能、版块或文案。关于页的肖像是占位，不要编造成真实照片或履历。

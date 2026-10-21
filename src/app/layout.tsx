@@ -1,59 +1,59 @@
 import type { Metadata } from "next";
-import { Newsreader, Noto_Serif_SC, Roboto_Mono } from "next/font/google";
-import { cookies } from "next/headers";
+import { Cormorant_Garamond } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Providers } from "@/components/providers";
-import { parseLocale } from "@/i18n/config";
-import { getHomeCopy } from "@/lib/content";
-import { cn } from "@/lib/utils";
+import { getSite } from "@/lib/content";
+import { mapStringsDeep, toZhTW } from "@/lib/locale-sync";
 import "./globals.css";
 
-const newsreader = Newsreader({
+const display = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400"],
-  variable: "--font-newsreader",
-  display: "swap",
-});
-
-const notoSerif = Noto_Serif_SC({
-  subsets: ["latin"],
-  weight: ["300", "400"],
-  variable: "--font-noto-serif",
-  display: "swap",
-});
-
-const robotoMono = Roboto_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-roboto-mono",
+  weight: ["400", "500", "600"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "陆恩惠 Aric",
-  description: "理财见解、履历与联系",
+  title: {
+    default: "陆恩惠 Aric",
+    template: "%s · 陆恩惠 Aric",
+  },
+  description: "理财顾问，写一点自己的看法。",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jar = await cookies();
-  const locale = parseLocale(jar.get("locale")?.value);
-  const homeCopy = await getHomeCopy();
+  const site = getSite();
 
   return (
-    <html
-      lang={locale}
-      className={cn(newsreader.variable, notoSerif.variable, robotoMono.variable)}
-    >
+    <html lang="zh-CN" className={display.variable}>
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/noto-serif-sc-400.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/noto-serif-sc-500.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="min-h-screen antialiased">
-        <Providers locale={locale} homeCopy={homeCopy}>
+        <Providers>
           <Header />
-          <main className="site-main">{children}</main>
-          <Footer />
+          <main id="content" className="site-main">
+            {children}
+          </main>
+          <Footer site={site} siteTraditional={mapStringsDeep(site, toZhTW)} />
         </Providers>
       </body>
     </html>

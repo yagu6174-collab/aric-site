@@ -1,25 +1,29 @@
 "use client";
 
-import { Reveal } from "@/components/motion/Reveal";
 import { useI18n } from "@/i18n/provider";
 
+function lines(title: string, body: string) {
+  return [title, ...body.split(/\n+/)].map((item) => item.trim()).filter(Boolean);
+}
+
 export function PhilosophyBento() {
-  const { dict, locale } = useI18n();
-  const glue = locale === "en" ? " " : "";
+  const { dict } = useI18n();
 
   return (
-    <section className="essay-chapter">
-      <p className="essay-num" aria-hidden>
-        01
-      </p>
-      <Reveal className="essay-prose">
-        <h2>{dict.home.philosophyTitle}</h2>
-        {dict.philosophies.map((item) => (
-          <p key={item.body}>
-            {[item.title, item.body].filter(Boolean).join(glue)}
+    <section className="chapter" id="chapter">
+      <div className="shell chapter-grid">
+        <div className="chapter-heading">
+          <p className="chapter-num" aria-hidden>
+            01
           </p>
-        ))}
-      </Reveal>
+          <h2>{dict.home.philosophyTitle}</h2>
+        </div>
+        <div className="prose">
+          {dict.philosophies.flatMap((item) =>
+            lines(item.title, item.body).map((paragraph) => <p key={paragraph}>{paragraph}</p>),
+          )}
+        </div>
+      </div>
     </section>
   );
 }

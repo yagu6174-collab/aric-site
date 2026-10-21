@@ -1,10 +1,10 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
-import type { Locale } from "@/i18n/config";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { parseLocale, type Locale } from "@/i18n/config";
 import { getDictionary, type Dictionary } from "@/i18n/dictionaries";
-import { applyHomeCopy } from "@/lib/home-copy";
-import type { HomeCopyBundle } from "@/types/home-copy";
+
+const STORAGE_KEY = "aric-locale";
 
 const I18nContext = createContext<{
   locale: Locale;
@@ -12,21 +12,15 @@ const I18nContext = createContext<{
   setLocale: (locale: Locale) => void;
 } | null>(null);
 
-export function I18nProvider({
-  initialLocale,
-  homeCopy,
-  children,
-}: {
-  initialLocale: Locale;
-  homeCopy?: HomeCopyBundle;
-  children: React.ReactNode;
-}) {
-  const [locale, setLocaleState] = useState<Locale>(initialLocale);
-  const dict = useMemo(() => {
-    const base = getDictionary(locale);
-    const copy = homeCopy?.[locale];
-    return copy ? applyHomeCopy(base, copy, locale) : base;
-  }, [locale, homeCopy]);
+export function I18nProvider({ children }: { children: React.ReactNode }) {
+  const [locale, setLocaleState] = useState<Locale>("zh-CN");
+  const dict = useMemo(() => getDictionary(locale), [locale]);
+
+  useEffect(() => {
+    const stored = parseLocale(window.localStorage.getItem(STORAGE_KEY));
+    setLocaleState(stored);
+    document.documentElement.lang = stored;
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -34,8 +28,8 @@ export function I18nProvider({
       dict,
       setLocale: (next: Locale) => {
         setLocaleState(next);
-        document.cookie = `locale=${next}; path=/; max-age=31536000; samesite=lax`;
         document.documentElement.lang = next;
+        window.localStorage.setItem(STORAGE_KEY, next);
       },
     }),
     [locale, dict],

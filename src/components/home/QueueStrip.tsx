@@ -1,5 +1,3 @@
-import { OpeningGround } from "@/components/home/OpeningGround";
-
 const FIGURES = [
   { src: "/queue/late-for-class.png", aspect: 0.625, flip: false },
   { src: "/queue/mask.png", aspect: 0.4894, flip: true },
@@ -28,7 +26,7 @@ function Person({
 }) {
   return (
     <span
-      className="essay-person"
+      className="person"
       data-flip={flip ? "1" : undefined}
       data-pause={pause ? "1" : undefined}
       style={{
@@ -42,15 +40,14 @@ function Person({
 
 export function QueueStrip() {
   return (
-    <>
-      <div className="essay-queue" aria-hidden>
-        <div className="essay-queue-row">
+    <div className="frieze-wrap">
+      <div className="frieze" aria-hidden>
+        <div className="frieze-row">
           {FIGURES.map((figure) => (
             <Person key={figure.src} {...figure} />
           ))}
         </div>
       </div>
-      <OpeningGround />
-    </>
+    </div>
   );
 }

@@ -6,6 +6,7 @@ export const en = {
     insights: "Insights",
     about: "About",
     contact: "Contact",
+    skip: "Skip to content",
   },
   home: {
     heroTitle: "The more you fear risk, the more you need protection",
@@ -13,29 +14,28 @@ export const en = {
     heroSubtitle: "A wealth advisor, writing a few views of my own.",
     ctaInsights: "Explore insights",
     ctaAbout: "About & resume",
-    studioLabel: "You can leave from here",
-    studioHint: "A résumé, or a conversation. No need to open both.",
-    philosophyTitle: "Stay long enough",
+    studioLabel: "A few other things",
+    studioHint: "",
+    philosophyTitle: "Steady it first",
     latestTitle: "Written lately",
     read: "Read",
   },
   studio: {
-    insights: { title: "Notes still being written", desc: "On time, allocation, and the fears we underprice" },
-    about: { title: "Who I am", desc: "How I work, and the path that led here" },
-    contact: { title: "If you want to talk", desc: "WeChat is enough — say why you are writing" },
+    insights: {
+      title: "Notes still being written",
+      desc: "On time, allocation, and the fears that get underpriced",
+    },
+    about: { title: "Who I am", desc: "A short account of the experience" },
+    contact: {
+      title: "Contact",
+      desc: "Please note who introduced you, or why you are writing",
+    },
   },
   philosophies: [
     {
-      title: "Time is the most underpriced variable in a portfolio.",
-      body: " Stay solvent first, then talk about return. People come asking for products. The first question is which loss would make ordinary days impossible.",
-    },
-    {
-      title: "The more you fear, the earlier you isolate what cannot be borne.",
-      body: " Insurance, here, is not a slogan. It is a place to put fear, so the next choice can still be discussed.",
-    },
-    {
-      title: "Structure before story.",
-      body: " Build an arrangement you can sleep with, then listen to how beautifully a single product describes the future. A return that keeps you awake is not a return.",
+      title:
+        "People come asking about a product. I would rather ask first which loss would make ordinary days impossible. Stay long enough to live, then talk about return.",
+      body: "I have seen money saved over years disappear all at once, so the layer you cannot get past, I set aside first. I do not rush the rest.\nMake an arrangement you can sleep through, then listen to how good a single product says the future will be. What I accept, and use myself, is what I recommend to other people.",
     },
   ],
   insights: {
@@ -72,6 +72,9 @@ export const en = {
     city: "City",
     social: "Elsewhere",
     qrAlt: "WeChat QR placeholder",
+  },
+  notFound: {
+    title: "This page is not here",
   },
   footer: {
     label: "Disclaimer:",

@@ -3,9 +3,9 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
-import { Container } from "@/components/ui/Container";
+import { Mark } from "@/components/layout/Mark";
 import { useI18n } from "@/i18n/provider";
 import { cn } from "@/lib/utils";
 
@@ -21,58 +21,80 @@ export function Header() {
     { href: "/contact", label: dict.nav.contact },
   ];
 
-  if (pathname.startsWith("/admin")) return null;
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  function active(href: string) {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
 
   return (
     <>
-      <header className="site-header border-b border-[var(--line)]">
-        <Container className="relative flex items-center justify-between gap-4 py-3">
-          <Link href="/" className="shrink-0 font-serif text-lg tracking-wide">
-            {dict.name}
-            <span className="ml-2 text-xs text-[var(--muted)]">{dict.nameEn}</span>
+      <a className="skip" href="#content">
+        {dict.nav.skip}
+      </a>
+      <header className="site-header">
+        <div className="shell header-bar">
+          <Link href="/" className="brand">
+            <Mark />
+            <span>
+              <span className="brand-name">{dict.name}</span>
+              <span className="brand-en">{dict.nameEn}</span>
+            </span>
           </Link>
-          <nav className="hidden items-center gap-5 text-sm md:flex">
+          <nav className="nav-desktop" aria-label="Primary">
             {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "transition hover:text-[var(--fg)]",
-                  pathname === item.href
-                    ? "text-[var(--muted)]"
-                    : "text-[var(--fg)]",
-                )}
+                className={cn("nav-link", active(item.href) && "is-active")}
+                aria-current={active(item.href) ? "page" : undefined}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="header-tools">
             <LanguageSwitcher />
+            <Link href="/contact" className="btn-line header-cta">
+              {dict.studio.contact.title}
+              <span aria-hidden>→</span>
+            </Link>
             <button
               type="button"
-              className="md:hidden"
-              aria-label="Menu"
-              onClick={() => setOpen((v) => !v)}
+              className="menu-btn"
+              aria-expanded={open}
+              aria-label={open ? "Close" : "Menu"}
+              onClick={() => setOpen((value) => !value)}
             >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {open ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
-        </Container>
+        </div>
         {open ? (
-          <div className="border-t border-[var(--line)] md:hidden">
-            <Container className="flex flex-col gap-3 py-4 text-sm">
+          <div className="nav-panel">
+            <div className="shell">
               {items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
+                  className={cn(active(item.href) && "is-active")}
+                  aria-current={active(item.href) ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className="text-[var(--fg)]"
                 >
                   {item.label}
                 </Link>
               ))}
-            </Container>
+            </div>
           </div>
         ) : null}
       </header>

@@ -1,19 +1,18 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        ink: "#121212",
-        paper: "#FAF8F5",
-        mist: "#E8E4DC",
-        stone: "#6B6862",
+        ink: "#0c0b09",
+        ivory: "#f4efe6",
+        gold: "#c6a36a",
+        stone: "#c4bbb0",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "PingFang SC", "Noto Sans SC", "sans-serif"],
-        serif: ["var(--font-serif)", "Noto Serif SC", "Songti SC", "serif"],
+        sans: ["var(--font-serif)", "serif"],
+        serif: ["var(--font-serif)", "serif"],
       },
     },
   },

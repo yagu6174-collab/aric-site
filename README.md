@@ -1,10 +1,12 @@
-# 陆恩惠 Aric · 个人工作室站点
+# 陆恩惠 Aric
 
-Next.js App Router 个人站：工作室首页、理财见解、履历、联系页，以及可登录的后台。
+私人理财顾问的个人站。深色、静态，页面是随笔而不是宣传册。
 
-## 本地运行
+线上目前仍是上一版。这一版用 `next build` 静态导出到 `out/`，不包含后台、数据库或登录接口。
 
-需要 Node.js 18+：
+## 本地
+
+需要 Node.js 18+。
 
 ```bash
 npm install
@@ -13,57 +15,21 @@ npm run dev
 
 打开 http://localhost:3000
 
-后台：http://localhost:3000/admin  
-本地密码见 `.env.local` 的 `ADMIN_PASSWORD`（开发默认是 `aric-dev`，上线必须改掉）。
+生产构建（不要加 `--turbopack`）：
 
-## 接到 GitHub 之后怎么更新内容
+```bash
+npm run build
+```
 
-GitHub 只保存网站程序。文章在 **Vercel 上线后的后台** 发布，不会进仓库。
+## 内容放在仓库里
 
-1. 打开线上地址：`https://你的域名/admin`（不要用 localhost）
-2. 用 Vercel 里设置的 `ADMIN_PASSWORD` 登录
-3. 「编辑理财文章」发布或修改见解
-4. 保存后前台会马上更新，不用再 `git push`
+- 首页句子：`src/i18n/dictionaries/zh-CN.ts` 与 `en.ts`。繁体在运行时由简体经 OpenCC 转出。
+- 个人介绍：`content/about.json`
+- 联系：`content/site.json`（微信、邮箱、城市）
+- 文章：`content/insights/*.json`。链接用文章里的 `slug`，中文 slug 可以打开。
 
-主页文案同样走 `/admin/home`。
+首页人物剪影在 `public/queue/`。
 
-## 部署到 Vercel（按顺序做一次）
+## 页面
 
-### 1. 把代码放到 GitHub
-
-在 GitHub 新建仓库（建议公开或私有均可），把本项目 `main` 分支推上去。
-
-### 2. 用 Vercel 导入这个仓库
-
-1. 打开 [https://vercel.com](https://vercel.com) 并登录（可用 GitHub 账号）
-2. **Add New → Project**，选中这个仓库
-3. Framework 会识别为 Next.js，保持默认即可
-4. 先点 Deploy
-
-### 3. 打开 Blob 存储（存文章与主页文案）
-
-1. Vercel 项目页 → **Storage** → 创建 **Blob**
-2. 把它连接到当前项目
-3. 会自动写入环境变量 `BLOB_READ_WRITE_TOKEN`
-
-### 4. 设置后台密码
-
-Vercel 项目 → **Settings → Environment Variables**，确认有：
-
-| 名称 | 说明 |
-|---|---|
-| `ADMIN_PASSWORD` | 线上后台密码，不要用 `aric-dev` |
-| `BLOB_READ_WRITE_TOKEN` | 创建 Blob 后一般会自动出现 |
-| `OPENAI_API_KEY` | 可选。设置后，主页文案保存时用它把简体同步成英文；不设则走公共翻译接口 |
-
-Production / Preview / Development 都勾上。改完变量后 **Redeploy** 一次。
-
-### 5. 以后只做这件事
-
-打开 `https://你的项目.vercel.app/admin` 更新即可。
-
-## 上线前请替换的占位
-
-- `content/site.json`：微信号、邮箱、城市
-- `public/placeholders/wechat-qr.jpg`：微信二维码
-- `content/about.json`：学历与履历
+`/`、`/insights`、`/insights/[slug]`、`/about`、`/contact`。语言在页眉切换，记在浏览器本地。

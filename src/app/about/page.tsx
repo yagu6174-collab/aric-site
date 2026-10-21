@@ -1,12 +1,13 @@
+import type { Metadata } from "next";
 import { AboutArchive } from "@/components/about/AboutArchive";
 import { getAbout } from "@/lib/content";
+import { mapStringsDeep, toZhTW } from "@/lib/locale-sync";
 
-export default async function AboutPage() {
-  const about = await getAbout();
+export const metadata: Metadata = {
+  title: "个人介绍",
+};
 
-  return (
-    <div className="essay-page">
-      <AboutArchive about={about} />
-    </div>
-  );
+export default function AboutPage() {
+  const about = getAbout();
+  return <AboutArchive about={about} aboutTraditional={mapStringsDeep(about, toZhTW)} />;
 }
