@@ -295,9 +295,9 @@ button {
   padding-bottom: clamp(1.25rem, 3.5vh, 2.75rem);
   overflow: hidden;
   background:
-    linear-gradient(to top, var(--bg) 0%, transparent 18%),
-    radial-gradient(ellipse 48% 42% at 71% 76%, rgba(228, 205, 154, 0.2), transparent 62%),
-    radial-gradient(ellipse 84% 34% at 52% 92%, rgba(198, 163, 106, 0.09), transparent 70%);
+    linear-gradient(to top, var(--bg) 0%, transparent 16%),
+    radial-gradient(ellipse 46% 36% at 70% 84%, rgba(198, 163, 106, 0.11), transparent 64%),
+    radial-gradient(ellipse 80% 28% at 50% 96%, rgba(198, 163, 106, 0.05), transparent 72%);
 }
 
 .hero-inner {
@@ -306,7 +306,7 @@ button {
   display: flex;
   flex: 1 1 auto;
   align-items: flex-end;
-  padding: clamp(1.75rem, 5vh, 3.5rem) 0 0.85rem;
+  padding: clamp(1.75rem, 5vh, 3.5rem) 0 clamp(2.75rem, 6vh, 4.25rem);
 }
 
 .hero-copy {
@@ -363,9 +363,9 @@ button {
   width: min(66vw, 980px);
   height: auto;
   color: var(--gold);
-  opacity: 0.86;
+  opacity: 0.58;
   pointer-events: none;
-  filter: drop-shadow(0 0 14px rgba(198, 163, 106, 0.28));
+  filter: drop-shadow(0 0 10px rgba(198, 163, 106, 0.12));
   animation: arc-in 0.9s var(--ease) both;
 }
 
@@ -402,7 +402,7 @@ button {
     opacity: 0;
   }
   to {
-    opacity: 0.86;
+    opacity: 0.58;
   }
 }
 
@@ -411,7 +411,7 @@ button {
     opacity: 0;
   }
   to {
-    opacity: 0.62;
+    opacity: 0.42;
   }
 }
 
@@ -426,12 +426,12 @@ button {
   left: -4%;
   right: -6%;
   bottom: -1rem;
-  height: 210%;
+  height: 130%;
   background: radial-gradient(
-    ellipse 46% 48% at 70% 78%,
-    rgba(228, 205, 154, 0.34),
-    rgba(198, 163, 106, 0.1) 42%,
-    transparent 70%
+    ellipse 42% 46% at 68% 82%,
+    rgba(198, 163, 106, 0.16),
+    rgba(198, 163, 106, 0.05) 46%,
+    transparent 72%
   );
   filter: blur(12px);
   pointer-events: none;
@@ -439,9 +439,9 @@ button {
 
 .frieze {
   position: relative;
-  height: calc(var(--queue-unit) * 1.22 + 1.15rem);
+  height: calc(var(--queue-unit) * 1.06 + 1.15rem);
   overflow: hidden;
-  --queue-unit: calc(100cqi / 8.78);
+  --queue-unit: calc(100cqi / 10.6);
   padding: 0 clamp(0.6rem, 1.6vw, 1.35rem) 0.85rem;
   container-type: inline-size;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 2.2%, #000 97.8%, transparent);
@@ -462,7 +462,7 @@ button {
   bottom: 0.15rem;
   z-index: 1;
   height: 2.4rem;
-  background: radial-gradient(ellipse at 68% 30%, rgba(228, 205, 154, 0.28), transparent 70%);
+  background: radial-gradient(ellipse at 66% 30%, rgba(198, 163, 106, 0.14), transparent 72%);
   filter: blur(3px);
   pointer-events: none;
 }
@@ -472,7 +472,8 @@ button {
   display: block;
   height: calc(var(--queue-unit) * var(--scale, 1));
   background-color: #cbb89a;
-  background-image: linear-gradient(175deg, #fff6e4 0%, #f0e2c2 46%, #d2b074 100%);
+  background-image: linear-gradient(180deg, #d9c59a 0%, #b89560 100%);
+  opacity: 0.62;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center bottom;
@@ -480,12 +481,11 @@ button {
   -webkit-mask-size: contain;
   mask-size: contain;
   transform-origin: 50% 100%;
-  filter:
-    drop-shadow(0 0 0.6px rgba(244, 230, 196, 0.55))
-    drop-shadow(0 10px 7px rgba(0, 0, 0, 0.42));
+  filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.35));
   transition:
     transform 0.5s var(--ease),
-    filter 0.5s var(--ease);
+    filter 0.5s var(--ease),
+    opacity 0.5s var(--ease);
 }
 
 .person[data-flip="1"] {
@@ -494,20 +494,6 @@ button {
 
 .person[data-pause="1"] {
   margin-left: 1.35rem;
-}
-
-.frieze-row .person:nth-child(-n + 2) {
-  filter:
-    brightness(0.86)
-    drop-shadow(0 0 0.6px rgba(244, 230, 196, 0.4))
-    drop-shadow(0 10px 7px rgba(0, 0, 0, 0.42));
-}
-
-.frieze-row .person:nth-child(n + 9) {
-  filter:
-    brightness(1.08)
-    drop-shadow(0 0 0.8px rgba(255, 244, 220, 0.75))
-    drop-shadow(0 12px 10px rgba(0, 0, 0, 0.4));
 }
 
 .chapter {
@@ -1182,7 +1168,7 @@ html[lang="en"] .text-link {
   .hero-inner {
     align-items: flex-start;
     padding-top: clamp(1.6rem, 5vh, 2.5rem);
-    padding-bottom: 0.85rem;
+    padding-bottom: 2.15rem;
   }
 
   .hero-arc {
@@ -1190,7 +1176,7 @@ html[lang="en"] .text-link {
     height: 62%;
     right: -32%;
     bottom: -4%;
-    opacity: 0.62;
+    opacity: 0.42;
     animation: arc-in-quiet 0.9s var(--ease) both;
   }
 
@@ -1230,8 +1216,8 @@ html[lang="en"] .text-link {
 
 @media (max-width: 720px) {
   .frieze {
-    --queue-unit: 8.15rem;
-    height: 9.55rem;
+    --queue-unit: 6.35rem;
+    height: 7.7rem;
     overflow-x: auto;
     overflow-y: hidden;
     padding-inline: 0;
@@ -1253,7 +1239,7 @@ html[lang="en"] .text-link {
   }
 
   .person {
-    height: 8.15rem;
+    height: 6.35rem;
   }
 
   .person[data-pause="1"] {
@@ -1284,12 +1270,9 @@ html[lang="en"] .text-link {
 
 @media (hover: hover) and (pointer: fine) {
   .frieze-row .person:hover {
-    filter:
-      brightness(1.18)
-      drop-shadow(0 0 0.8px rgba(255, 244, 220, 0.85))
-      drop-shadow(0 14px 12px rgba(198, 163, 106, 0.3))
-      drop-shadow(0 8px 6px rgba(0, 0, 0, 0.4));
-    transform: translateY(-6px);
+    opacity: 0.92;
+    filter: drop-shadow(0 10px 8px rgba(198, 163, 106, 0.18));
+    transform: translateY(-4px);
   }
 
   .frieze-row .person[data-flip="1"]:hover {
@@ -1304,10 +1287,9 @@ html[lang="en"] .text-link {
 
   .frieze-row .person:hover,
   .frieze-row .person:active {
+    opacity: 0.62;
     transform: none;
-    filter:
-      drop-shadow(0 0 0.6px rgba(244, 230, 196, 0.55))
-      drop-shadow(0 10px 7px rgba(0, 0, 0, 0.42));
+    filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.35));
   }
 
   .person[data-flip="1"],
