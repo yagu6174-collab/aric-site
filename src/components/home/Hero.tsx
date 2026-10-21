@@ -1,5 +1,6 @@
 "use client";
 
+import { QueueStrip } from "@/components/home/QueueStrip";
 import { useI18n } from "@/i18n/provider";
 
 function Arc() {
@@ -25,8 +26,14 @@ function Arc() {
       <path
         d="M10 860C190 830 340 690 400 500C460 300 490 120 510 0"
         stroke="currentColor"
-        strokeWidth="0.7"
-        opacity="0.4"
+        strokeWidth="0.75"
+        opacity="0.45"
+      />
+      <path
+        d="M0 800C150 730 300 770 460 735C620 700 720 785 820 730"
+        stroke="currentColor"
+        strokeWidth="1.15"
+        opacity="0.8"
       />
     </svg>
   );
@@ -53,6 +60,7 @@ export function Hero() {
         </div>
       </div>
       <Arc />
+      <QueueStrip />
     </section>
   );
 }
