@@ -1,91 +1,98 @@
 export const zhTW = {
-  name: "陸恩惠",
-  nameEn: "Aric",
-  nav: {
-    home: "首頁",
-    insights: "理財見解",
-    about: "個人介紹",
-    contact: "聯繫方式",
+  "name": "陸恩惠",
+  "nameEn": "Aric",
+  "nav": {
+    "home": "首頁",
+    "insights": "理財見解",
+    "about": "個人介紹",
+    "contact": "聯繫方式",
+    "skip": "跳到正文"
   },
-  home: {
-    heroTitle: "越害怕風險，越需要保險",
-    heroLines: ["越害怕風險", "越需要保險"],
-    heroSubtitle: "理財顧問，寫一點自己的看法。",
-    ctaInsights: "探索理財見解",
-    ctaAbout: "關於我 & 履歷",
-    studioLabel: "也可以從這裡走開",
-    studioHint: "履歷，或者說話。不必都點開。",
-    philosophyTitle: "先活得久",
-    latestTitle: "最近寫下的",
-    read: "閱讀",
+  "home": {
+    "heroTitle": "越害怕風險，越需要保險",
+    "heroLines": [
+      "越害怕風險",
+      "越需要保險"
+    ],
+    "heroSubtitle": "理財顧問，寫一點自己的看法。",
+    "ctaInsights": "探索理財見解",
+    "ctaAbout": "關於我 & 履歷",
+    "studioLabel": "其他的一些內容",
+    "studioHint": "",
+    "philosophyTitle": "先穩一手",
+    "latestTitle": "最近寫下的",
+    "read": "閱讀"
   },
-  studio: {
-    insights: { title: "還在寫的筆記", desc: "關於時間、配置，和那些被低估的怕" },
-    about: { title: "我是誰", desc: "服務怎麼做，路是怎麼走來的" },
-    contact: { title: "若要說話", desc: "微信即可，備註來意" },
+  "studio": {
+    "insights": {
+      "title": "還在寫的筆記",
+      "desc": "關於時間、配置，和那些被低估的怕"
+    },
+    "about": {
+      "title": "我是誰",
+      "desc": "經歷介紹"
+    },
+    "contact": {
+      "title": "聯繫",
+      "desc": "請備註介紹人或來意"
+    }
   },
-  philosophies: [
+  "philosophies": [
     {
-      title: "時間是配置裡最被低估的變量。",
-      body: "先活得久，再談收益。很多人來問產品，其實先要問：哪一筆損失會讓日子過不下去。",
-    },
-    {
-      title: "越害怕，越要把不可承受的那一層先隔離出去。",
-      body: "保險在這裡不是口號，是給怕留一個位置，讓後面的選擇還能被討論。",
-    },
-    {
-      title: "結構先於故事。",
-      body: "先做成自己能睡得著的安排，再聽單一產品把未來說得多好。睡不著的收益，都不算收益。",
-    },
+      "title": "很多人來問產品，我更想先問：哪一筆損失會讓日子過不下去。先活得久，再談收益。",
+      "body": "我見過經年累月攢下的錢怎樣一次沒掉，所以過不去的那一層，我會先隔開，不會急著往下推。\n先做成自己能睡得著的安排，再聽單一產品把未來說得多好。我自己認可、自己也用的，才推薦給他人。"
+    }
   ],
-  insights: {
-    title: "理財見解",
-    disclaimer: "以上僅為個人觀點分享，不構成具體投資建議。",
-    all: "全部",
-    categories: {
-      allocation: "資產配置",
-      market: "市場觀察",
-      risk: "風險管理",
-      family: "家庭財務規劃",
-      essay: "個人隨筆",
+  "insights": {
+    "title": "理財見解",
+    "disclaimer": "以上僅為個人觀點分享，不構成具體投資建議。",
+    "all": "全部",
+    "categories": {
+      "allocation": "資產配置",
+      "market": "市場觀察",
+      "risk": "風險管理",
+      "family": "家庭財務規劃",
+      "essay": "個人隨筆"
     },
-    empty: "這一分類還沒有文章。",
-    minRead: "min read",
-    charCount: "字",
-    back: "返回見解列表",
+    "empty": "這一分類還沒有文章。",
+    "minRead": "min read",
+    "charCount": "字",
+    "back": "返回見解列表"
   },
-  about: {
-    title: "個人介紹",
-    storyTitle: "服務理念",
-    portraitAlt: "陸恩惠",
-    education: "教育背景",
-    career: "職業履歷",
-    skills: "專業技能",
+  "about": {
+    "title": "個人介紹",
+    "storyTitle": "服務理念",
+    "portraitAlt": "陸恩惠",
+    "education": "教育背景",
+    "career": "職業履歷",
+    "skills": "專業技能"
   },
-  contact: {
-    title: "聯繫方式",
-    wechat: "微信號",
-    copy: "一鍵複製",
-    copied: "已複製",
-    hint: "添加微信請備註來意：理財交流 / 商業合作，感謝！",
-    email: "工作郵箱",
-    city: "所在城市",
-    social: "其他連結",
-    qrAlt: "微信二維碼佔位",
+  "contact": {
+    "title": "聯繫方式",
+    "wechat": "微信號",
+    "copy": "一鍵複製",
+    "copied": "已複製",
+    "hint": "添加微信請備註來意：理財交流 / 商業合作，感謝！",
+    "email": "工作郵箱",
+    "city": "所在城市",
+    "social": "其他鏈接",
+    "qrAlt": "微信二維碼佔位"
   },
-  footer: {
-    label: "免責聲明：",
-    rights:
-      "本網站所載的所有內容（包括個人介紹、專欄文章、視頻及任何與保險公司相關的資訊）僅代表個人意見和觀點，並不代表任何保險公司或機構的官方立場、政策或承諾。網站內容旨在分享個人專業見解，非業務推廣或投資建議。任何基於本網站資訊的決策均需獨立核實，任何保險公司或機構都不對此承擔任何責任。",
+  "notFound": {
+    "title": "這一頁不存在"
   },
-  admin: {
-    title: "管理後台",
-    login: "登入",
-    password: "密碼",
-    logout: "退出",
-    insights: "文章",
-    save: "儲存",
-    delete: "刪除",
-    needPassword: "請在 .env.local 設定 ADMIN_PASSWORD。",
+  "footer": {
+    "label": "免責聲明：",
+    "rights": "本網站所載的所有內容（包括個人介紹、專欄文章、視頻及任何與保險公司相關的資訊）僅代表個人意見和觀點，並不代表任何保險公司或機構的官方立場、政策或承諾。網站內容旨在分享個人專業見解，非業務推廣或投資建議。任何基於本網站資訊的決策均需獨立核實，任何保險公司或機構都不對此承擔任何責任。"
   },
+  "admin": {
+    "title": "管理後臺",
+    "login": "登錄",
+    "password": "密碼",
+    "logout": "退出",
+    "insights": "文章",
+    "save": "保存",
+    "delete": "刪除",
+    "needPassword": "請在 .env.local 設置 ADMIN_PASSWORD。"
+  }
 } as const;

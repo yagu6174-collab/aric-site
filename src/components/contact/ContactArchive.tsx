@@ -5,61 +5,86 @@ import Image from "next/image";
 import { useState } from "react";
 import type { SiteProfile } from "@/types/site";
 import { useI18n } from "@/i18n/provider";
-import { localizeSite } from "@/lib/localize";
+import { forLocale } from "@/lib/localize";
 
-export function ContactArchive({ site: profile }: { site: SiteProfile }) {
+export function ContactArchive({
+  site: profile,
+  siteTraditional,
+}: {
+  site: SiteProfile;
+  siteTraditional: SiteProfile;
+}) {
   const { dict, locale } = useI18n();
-  const site = localizeSite(profile, locale);
+  const site = forLocale(locale, profile, siteTraditional);
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(site.wechat);
-    setCopied(true);
+    const value = site.wechat;
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+    } catch {
+      const field = document.createElement("textarea");
+      field.value = value;
+      field.setAttribute("readonly", "");
+      field.style.position = "fixed";
+      field.style.left = "-9999px";
+      document.body.appendChild(field);
+      field.select();
+      const ok = document.execCommand("copy");
+      field.remove();
+      setCopied(ok);
+    }
     window.setTimeout(() => setCopied(false), 1600);
   }
 
   return (
-    <section className="essay-chapter">
-      <div className="essay-prose">
-        <h1>{dict.contact.title}</h1>
-        <p className="essay-kicker">{dict.contact.wechat}</p>
-        <p className="essay-wechat">{site.wechat}</p>
-        <button type="button" className="essay-text-btn" onClick={copy}>
-          {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-          {copied ? dict.contact.copied : dict.contact.copy}
-        </button>
-        <div className="essay-qr">
-          <Image
-            src="/placeholders/wechat-qr.jpg"
-            alt={dict.contact.qrAlt}
-            width={800}
-            height={1000}
-          />
-        </div>
-        <p className="essay-note">{dict.contact.hint}</p>
-        <dl className="essay-facts">
-          <div>
-            <dt>{dict.contact.email}</dt>
-            <dd>
-              <a href={`mailto:${site.email}`}>{site.email}</a>
-            </dd>
-          </div>
-          <div>
-            <dt>{dict.contact.city}</dt>
-            <dd>{site.city}</dd>
-          </div>
-          {site.socials.map((item) => (
-            <div key={item.href}>
-              <dt>{item.label}</dt>
+    <div className="page">
+      <div className="shell contact-grid">
+        <header className="page-head">
+          <p className="kicker">{dict.nameEn}</p>
+          <h1>{dict.contact.title}</h1>
+          <p className="lede">{dict.contact.hint}</p>
+        </header>
+        <div className="contact-panel">
+          <p className="contact-label">{dict.contact.wechat}</p>
+          <p className="wechat-id">{site.wechat}</p>
+          <button type="button" className="btn-line" onClick={copy}>
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? dict.contact.copied : dict.contact.copy}
+          </button>
+          <figure className="qr">
+            <Image
+              src="/placeholders/wechat-qr.jpg"
+              alt={dict.contact.qrAlt}
+              width={800}
+              height={1000}
+            />
+          </figure>
+          <dl className="facts">
+            <div>
+              <dt>{dict.contact.email}</dt>
               <dd>
-                <a href={item.href} target="_blank" rel="noreferrer">
-                  {item.href}
-                </a>
+                <a href={`mailto:${site.email}`}>{site.email}</a>
               </dd>
             </div>
-          ))}
-        </dl>
+            <div>
+              <dt>{dict.contact.city}</dt>
+              <dd>{site.city}</dd>
+            </div>
+            {site.socials.map((item) => (
+              <div key={item.href}>
+                <dt>{item.label || dict.contact.social}</dt>
+                <dd>
+                  <a href={item.href} target="_blank" rel="noreferrer">
+                    {item.label || item.href}
+                  </a>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

@@ -6,6 +6,7 @@ export const zhCN = {
     insights: "理财见解",
     about: "个人介绍",
     contact: "联系方式",
+    skip: "跳到正文",
   },
   home: {
     heroTitle: "越害怕风险，越需要保险",
@@ -13,29 +14,22 @@ export const zhCN = {
     heroSubtitle: "理财顾问，写一点自己的看法。",
     ctaInsights: "探索理财见解",
     ctaAbout: "关于我 & 履历",
-    studioLabel: "也可以从这里走开",
-    studioHint: "履历，或者说话。不必都点开。",
-    philosophyTitle: "先活得久",
+    studioLabel: "其他的一些内容",
+    studioHint: "",
+    philosophyTitle: "先稳一手",
     latestTitle: "最近写下的",
     read: "阅读",
   },
   studio: {
     insights: { title: "还在写的笔记", desc: "关于时间、配置，和那些被低估的怕" },
-    about: { title: "我是谁", desc: "服务怎么做，路是怎么走来的" },
-    contact: { title: "若要说话", desc: "微信即可，备注来意" },
+    about: { title: "我是谁", desc: "经历介绍" },
+    contact: { title: "联系", desc: "请备注介绍人或来意" },
   },
   philosophies: [
     {
-      title: "时间是配置里最被低估的变量。",
-      body: "先活得久，再谈收益。很多人来问产品，其实先要问：哪一笔损失会让日子过不下去。",
-    },
-    {
-      title: "越害怕，越要把不可承受的那一层先隔离出去。",
-      body: "保险在这里不是口号，是给怕留一个位置，让后面的选择还能被讨论。",
-    },
-    {
-      title: "结构先于故事。",
-      body: "先做成自己能睡得着的安排，再听单一产品把未来说得多好。睡不着的收益，都不算收益。",
+      title:
+        "很多人来问产品，我更想先问：哪一笔损失会让日子过不下去。先活得久，再谈收益。",
+      body: "我见过经年累月攒下的钱怎样一次没掉，所以过不去的那一层，我会先隔开，不会急着往下推。\n先做成自己能睡得着的安排，再听单一产品把未来说得多好。我自己认可、自己也用的，才推荐给他人。",
     },
   ],
   insights: {
@@ -72,6 +66,9 @@ export const zhCN = {
     city: "所在城市",
     social: "其他链接",
     qrAlt: "微信二维码占位",
+  },
+  notFound: {
+    title: "这一页不存在",
   },
   footer: {
     label: "免责声明：",

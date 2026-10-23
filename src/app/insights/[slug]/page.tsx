@@ -1,8 +1,23 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { InsightArticle } from "@/components/insights/InsightArticle";
-import { getInsight } from "@/lib/content";
+import { getInsightCopy, getInsightCopies } from "@/lib/content";
 
-export const dynamic = "force-dynamic";
+export function generateStaticParams() {
+  return getInsightCopies().map((item) => ({ slug: item.simplified.slug }));
+}
+
+export const dynamicParams = false;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const item = getInsightCopy(slug);
+  return { title: item?.simplified.title ?? "见解" };
+}
 
 export default async function InsightPage({
   params,
@@ -10,12 +25,7 @@ export default async function InsightPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = await getInsight(slug);
+  const item = getInsightCopy(slug);
   if (!item) notFound();
-
-  return (
-    <div className="essay-page">
-      <InsightArticle item={item} />
-    </div>
-  );
+  return <InsightArticle item={item} />;
 }

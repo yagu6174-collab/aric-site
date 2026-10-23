@@ -7,15 +7,19 @@ export function Timeline({
   title: string;
   items: AboutContent["education"];
 }) {
+  if (!items.length) return null;
+
   return (
-    <section className="essay-timeline">
+    <section className="block">
       <h2>{title}</h2>
-      <ol className="essay-records">
+      <ol className="records">
         {items.map((item) => (
           <li key={`${item.period}-${item.title}`}>
             <small>{item.period}</small>
-            <strong>{item.title}</strong>
-            {item.detail ? <span>{item.detail}</span> : null}
+            <div>
+              <strong>{item.title}</strong>
+              {item.detail ? <p>{item.detail}</p> : null}
+            </div>
           </li>
         ))}
       </ol>

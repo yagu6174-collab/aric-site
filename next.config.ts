@@ -1,21 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "export",
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
-      },
-    ],
-  },
-  async headers() {
-    return [
-      {
-        source: "/admin/:path*",
-        headers: [{ key: "Cache-Control", value: "no-store, must-revalidate" }],
-      },
-    ];
+    unoptimized: true,
   },
 };
 

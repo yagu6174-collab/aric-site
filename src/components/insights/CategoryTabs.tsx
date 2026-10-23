@@ -1,21 +1,31 @@
 "use client";
 
+import { useMemo } from "react";
 import type { InsightCategory } from "@/types/insight";
 import { INSIGHT_CATEGORIES } from "@/types/insight";
 import { useI18n } from "@/i18n/provider";
 
 export function CategoryTabs({
+  categories,
   value,
   onChange,
 }: {
+  categories: InsightCategory[];
   value: "all" | InsightCategory;
   onChange: (value: "all" | InsightCategory) => void;
 }) {
   const { dict } = useI18n();
-  const tabs: Array<"all" | InsightCategory> = ["all", ...INSIGHT_CATEGORIES];
+  const present = useMemo(
+    () => INSIGHT_CATEGORIES.filter((category) => categories.includes(category)),
+    [categories],
+  );
+
+  if (present.length < 2) return null;
+
+  const tabs: Array<"all" | InsightCategory> = ["all", ...present];
 
   return (
-    <div className="essay-cats">
+    <div className="filters" role="group" aria-label={dict.insights.title}>
       {tabs.map((tab) => (
         <button
           key={tab}

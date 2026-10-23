@@ -23,3 +23,8 @@ export type Insight = {
   quote: string;
   body: ArticleBlock[];
 };
+
+export type InsightCopy = {
+  simplified: Insight;
+  traditional: Insight;
+};

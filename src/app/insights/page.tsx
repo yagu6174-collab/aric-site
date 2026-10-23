@@ -1,14 +1,11 @@
+import type { Metadata } from "next";
 import { InsightsBoard } from "@/components/insights/InsightsBoard";
-import { getInsights } from "@/lib/content";
+import { getInsightCopies } from "@/lib/content";
 
-export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "理财见解",
+};
 
-export default async function InsightsPage() {
-  const items = await getInsights();
-
-  return (
-    <div className="essay-page">
-      <InsightsBoard items={items} />
-    </div>
-  );
+export default function InsightsPage() {
+  return <InsightsBoard items={getInsightCopies()} />;
 }

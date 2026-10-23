@@ -1,24 +1,22 @@
 import { Hero } from "@/components/home/Hero";
 import { LatestInsights } from "@/components/home/LatestInsights";
 import { PhilosophyBento } from "@/components/home/PhilosophyBento";
-import { QueueStrip } from "@/components/home/QueueStrip";
 import { StudioDirectory } from "@/components/home/StudioDirectory";
-import { getInsights } from "@/lib/content";
+import { getInsightCopies } from "@/lib/content";
 
-export const dynamic = "force-dynamic";
-
-export default async function HomePage() {
-  const insights = await getInsights();
+export default function HomePage() {
+  const insights = getInsightCopies();
 
   return (
-    <div className="essay-page">
+    <>
       <Hero />
-      <div className="essay-body">
-        <QueueStrip />
-        <PhilosophyBento />
-        <StudioDirectory />
-        <LatestInsights items={insights} />
-      </div>
-    </div>
+      <PhilosophyBento />
+      <section className="band">
+        <div className="shell band-grid">
+          <LatestInsights items={insights} />
+          <StudioDirectory />
+        </div>
+      </section>
+    </>
   );
 }
