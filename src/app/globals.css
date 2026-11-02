@@ -1303,6 +1303,17 @@ html[lang="en"] .text-link {
 .edit-stage .site-header {
   position: sticky;
   top: 0;
+  z-index: 20;
+}
+
+/* Page tabs and the preview header share the admin scrollport. Keep the preview header under the tabs. */
+.admin-shell {
+  --admin-tabs: 2.25rem;
+  scroll-padding-top: calc(var(--admin-tabs) + var(--header));
+}
+
+.admin-shell .edit-stage .site-header {
+  top: var(--admin-tabs);
 }
 
 .edit-stage .site-header-spacer {

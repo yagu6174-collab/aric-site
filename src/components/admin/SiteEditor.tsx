@@ -163,34 +163,34 @@ export function SiteEditor({ initial, visits }: { initial: SiteDraft; visits: Vi
   }
 
   return (
-    <div className="flex h-dvh flex-col bg-stone-100 text-stone-900">
-      <header className="flex shrink-0 flex-wrap items-center gap-3 border-b border-stone-200 bg-white px-4 py-3 sm:px-5">
-        <p className="text-sm font-semibold">后台</p>
-        <Link href="/" className="rounded-full border border-stone-300 px-3 py-1.5 text-sm text-stone-800">
+    <div className="admin-shell h-dvh overflow-y-auto bg-stone-100 text-stone-900">
+      <header className="flex flex-wrap items-center gap-x-2.5 gap-y-1 border-b border-stone-200 bg-white px-3 py-1.5 sm:px-4">
+        <p className="text-sm font-semibold tracking-tight">后台</p>
+        <Link href="/" className="rounded-full border border-stone-300 px-2.5 py-0.5 text-sm text-stone-800">
           回到主页
         </Link>
-        <div className="flex rounded-full bg-stone-100 p-1 lg:hidden">
-          <button type="button" onClick={() => setPane("preview")} className={`rounded-full px-3 py-1 text-xs ${pane === "preview" ? "bg-white shadow" : ""}`}>
+        <div className="flex rounded-full bg-stone-100 p-0.5 lg:hidden">
+          <button type="button" onClick={() => setPane("preview")} className={`rounded-full px-2.5 py-0.5 text-xs ${pane === "preview" ? "bg-white shadow" : ""}`}>
             预览
           </button>
-          <button type="button" onClick={() => setPane("edit")} className={`rounded-full px-3 py-1 text-xs ${pane === "edit" ? "bg-white shadow" : ""}`}>
+          <button type="button" onClick={() => setPane("edit")} className={`rounded-full px-2.5 py-0.5 text-xs ${pane === "edit" ? "bg-white shadow" : ""}`}>
             表单
           </button>
         </div>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2.5">
           <span className="text-xs text-stone-500">{status}</span>
-          <button type="button" onClick={() => void save()} disabled={saving} className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60">
+          <button type="button" onClick={() => void save()} disabled={saving} className="rounded-full bg-indigo-600 px-3 py-1 text-sm font-medium text-white disabled:opacity-60">
             {saving ? "保存中…" : "保存"}
           </button>
           <LogoutButton />
         </div>
       </header>
-      <div className="shrink-0 border-b border-stone-200 bg-stone-100 px-4 py-4 sm:px-5">
+      <div className="border-b border-stone-200 bg-stone-100 px-3 py-1.5 sm:px-4">
         <VisitPanel visits={visits} />
       </div>
-      <div className="flex min-h-0 flex-1">
-        <div className={`flex min-w-0 flex-1 flex-col ${pane === "edit" ? "max-lg:hidden" : ""}`}>
-          <div className="flex gap-2 overflow-x-auto border-b border-stone-200 bg-white px-3 py-2">
+      <div className="flex items-start">
+        <div className={`flex min-h-dvh min-w-0 flex-1 flex-col ${pane === "edit" ? "max-lg:hidden" : ""}`}>
+          <div className="sticky top-0 z-30 flex h-9 shrink-0 items-center gap-2 overflow-x-auto border-b border-stone-200 bg-white px-3">
             {pages.map((item) => (
               <button
                 key={item.id}
@@ -202,11 +202,9 @@ export function SiteEditor({ initial, visits }: { initial: SiteDraft; visits: Vi
               </button>
             ))}
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <SitePreview draft={draft} page={page} selected={selected} onSelect={choose} onAdd={onAdd} />
-          </div>
+          <SitePreview draft={draft} page={page} selected={selected} onSelect={choose} onAdd={onAdd} />
         </div>
-        <aside className={`w-full shrink-0 overflow-y-auto border-l border-stone-200 bg-stone-50 lg:w-96 ${pane === "preview" ? "max-lg:hidden" : ""}`}>
+        <aside className={`sticky top-0 z-20 h-dvh w-full shrink-0 self-start overflow-y-auto border-l border-stone-200 bg-stone-50 lg:w-96 ${pane === "preview" ? "max-lg:hidden" : ""}`}>
           {selected ? (
             <div className="sticky top-0 z-20 flex justify-end border-b border-stone-200 bg-stone-50 px-4 py-2">
               <button type="button" className="text-xs text-stone-500 underline-offset-2 hover:underline" onClick={() => setSelected(null)}>
