@@ -1,44 +1,60 @@
 "use client";
 
-import Link from "next/link";
-import type { InsightCopy } from "@/types/insight";
+import type { InsightDraft } from "@/lib/draft";
+import { EditAdd } from "@/components/edit/EditAdd";
+import { EditAnchor } from "@/components/edit/EditAnchor";
+import { editHit } from "@/components/edit/EditAnchor";
+import { useEditMode } from "@/components/edit/mode";
 import { useI18n } from "@/i18n/provider";
-import { forLocale } from "@/lib/localize";
 import { formatDate, insightCharCount } from "@/lib/utils";
 
-export function LatestInsights({ items }: { items: InsightCopy[] }) {
+export function LatestInsights({
+  items,
+  traditional,
+}: {
+  items: InsightDraft[];
+  traditional?: InsightDraft[];
+}) {
   const { dict, locale } = useI18n();
+  const edit = useEditMode();
+  const traditionalById = new Map((traditional ?? []).map((item) => [item.id, item]));
   const localized = items.slice(0, 3).map((item) => ({
-    shown: forLocale(locale, item.simplified, item.traditional),
-    count: insightCharCount(item.simplified),
-    slug: item.simplified.slug,
+    shown: locale === "zh-TW" ? (traditionalById.get(item.id) ?? item) : item,
+    count: insightCharCount(item),
+    slug: item.slug,
+    id: item.id,
   }));
 
   return (
     <div>
-      <h2 className="kicker">{dict.home.latestTitle}</h2>
+      <h2 {...editHit(edit?.selected, "latest", "kicker", edit?.onSelect)}>
+        {dict.home.latestTitle}
+      </h2>
       {localized.length ? (
         <ul className="writing-list">
           {localized.map((item) => (
-            <li key={item.slug}>
-              <Link href={`/insights/${encodeURIComponent(item.slug)}`}>
+            <li key={item.id}>
+              <EditAnchor href={`/insights/${encodeURIComponent(item.slug)}`} id={`insight:${item.id}`}>
                 <small>
                   {formatDate(item.shown.date, locale)} · {item.count} {dict.insights.charCount}{" "}
                   · {dict.insights.categories[item.shown.category]}
                 </small>
                 <strong>{item.shown.title}</strong>
                 <span>{item.shown.excerpt}</span>
-              </Link>
+              </EditAnchor>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="lede">{dict.insights.empty}</p>
+        <p {...editHit(edit?.selected, "insights-copy", "lede", edit?.onSelect)}>
+          {dict.insights.empty}
+        </p>
       )}
-      <Link href="/insights" className="text-link">
+      <EditAdd kind="insight" label="加一篇" />
+      <EditAnchor href="/insights" id="nav" className="text-link">
         {dict.nav.insights}
         <span aria-hidden>→</span>
-      </Link>
+      </EditAnchor>
     </div>
   );
 }

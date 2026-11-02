@@ -1,21 +1,25 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import type { SiteProfile } from "@/types/site";
+import { EditAdd } from "@/components/edit/EditAdd";
+import { editHit } from "@/components/edit/EditAnchor";
+import { useEditMode } from "@/components/edit/mode";
 import { useI18n } from "@/i18n/provider";
-import { forLocale } from "@/lib/localize";
 
 export function ContactArchive({
   site: profile,
   siteTraditional,
+  qrUrl,
 }: {
   site: SiteProfile;
-  siteTraditional: SiteProfile;
+  siteTraditional?: SiteProfile;
+  qrUrl: string;
 }) {
   const { dict, locale } = useI18n();
-  const site = forLocale(locale, profile, siteTraditional);
+  const edit = useEditMode();
+  const site = locale === "zh-TW" && siteTraditional ? siteTraditional : profile;
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -42,47 +46,67 @@ export function ContactArchive({
     <div className="page">
       <div className="shell contact-grid">
         <header className="page-head">
-          <p className="kicker">{dict.nameEn}</p>
-          <h1>{dict.contact.title}</h1>
-          <p className="lede">{dict.contact.hint}</p>
+          <p {...editHit(edit?.selected, "brand", "kicker", edit?.onSelect)}>
+            {dict.nameEn}
+          </p>
+          <h1 {...editHit(edit?.selected, "contact-copy", undefined, edit?.onSelect)}>{dict.contact.title}</h1>
+          <p {...editHit(edit?.selected, "contact-copy", "lede", edit?.onSelect)}>
+            {dict.contact.hint}
+          </p>
         </header>
         <div className="contact-panel">
-          <p className="contact-label">{dict.contact.wechat}</p>
-          <p className="wechat-id">{site.wechat}</p>
-          <button type="button" className="btn-line" onClick={copy}>
+          <p {...editHit(edit?.selected, "contact-copy", "contact-label", edit?.onSelect)}>
+            {dict.contact.wechat}
+          </p>
+          <p {...editHit(edit?.selected, "profile", "wechat-id", edit?.onSelect)}>
+            {site.wechat}
+          </p>
+          <button
+            type="button"
+            className="btn-line"
+            onClick={(event) => {
+              if (edit) {
+                event.preventDefault();
+                edit.onSelect("contact-copy");
+                return;
+              }
+              void copy();
+            }}
+          >
             {copied ? <Check size={14} /> : <Copy size={14} />}
             {copied ? dict.contact.copied : dict.contact.copy}
           </button>
-          <figure className="qr">
-            <Image
-              src="/placeholders/wechat-qr.jpg"
-              alt={dict.contact.qrAlt}
-              width={800}
-              height={1000}
-            />
+          <figure {...editHit(edit?.selected, "qr", "qr", edit?.onSelect)}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={qrUrl} alt={dict.contact.qrAlt} width={800} height={1000} />
           </figure>
           <dl className="facts">
-            <div>
+            <div {...editHit(edit?.selected, "profile", undefined, edit?.onSelect)}>
               <dt>{dict.contact.email}</dt>
               <dd>
-                <a href={`mailto:${site.email}`}>{site.email}</a>
+                {edit ? site.email : <a href={`mailto:${site.email}`}>{site.email}</a>}
               </dd>
             </div>
-            <div>
+            <div {...editHit(edit?.selected, "profile", undefined, edit?.onSelect)}>
               <dt>{dict.contact.city}</dt>
               <dd>{site.city}</dd>
             </div>
             {site.socials.map((item) => (
-              <div key={item.href}>
+              <div key={item.id} {...editHit(edit?.selected, `social:${item.id}`, undefined, edit?.onSelect)}>
                 <dt>{item.label || dict.contact.social}</dt>
                 <dd>
-                  <a href={item.href} target="_blank" rel="noreferrer">
-                    {item.label || item.href}
-                  </a>
+                  {edit ? (
+                    item.label || item.href
+                  ) : (
+                    <a href={item.href} target="_blank" rel="noreferrer">
+                      {item.label || item.href}
+                    </a>
+                  )}
                 </dd>
               </div>
             ))}
           </dl>
+          <EditAdd kind="social" label="加一个链接" />
         </div>
       </div>
     </div>

@@ -1,19 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import type { InsightCopy } from "@/types/insight";
+import type { InsightDraft } from "@/lib/draft";
+import { EditAnchor } from "@/components/edit/EditAnchor";
 import { useI18n } from "@/i18n/provider";
-import { forLocale } from "@/lib/localize";
 import { formatDate, insightCharCount } from "@/lib/utils";
 
-export function ArticleCard({ item }: { item: InsightCopy }) {
+export function ArticleCard({ item, traditional }: { item: InsightDraft; traditional?: InsightDraft }) {
   const { dict, locale } = useI18n();
-  const localized = forLocale(locale, item.simplified, item.traditional);
+  const localized = locale === "zh-TW" && traditional ? traditional : item;
   const showQuote = Boolean(localized.quote) && localized.quote !== localized.excerpt;
 
   return (
     <li>
-      <Link className="insight-row" href={`/insights/${encodeURIComponent(item.simplified.slug)}`}>
+      <EditAnchor className="insight-row" href={`/insights/${encodeURIComponent(item.slug)}`} id={`insight:${item.id}`}>
         <span className="insight-meta">
           <time dateTime={localized.date}>{formatDate(localized.date, locale)}</time>
           <span>{dict.insights.categories[localized.category]}</span>
@@ -24,9 +23,9 @@ export function ArticleCard({ item }: { item: InsightCopy }) {
           {showQuote ? <em className="insight-quote">“{localized.quote}”</em> : null}
         </span>
         <span className="insight-count">
-          {insightCharCount(item.simplified)} {dict.insights.charCount}
+          {insightCharCount(item)} {dict.insights.charCount}
         </span>
-      </Link>
+      </EditAnchor>
     </li>
   );
 }

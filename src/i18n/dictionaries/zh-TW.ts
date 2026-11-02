@@ -1,3 +1,4 @@
+// Kept as a reference. The live traditional text is OpenCC of the simplified draft.
 export const zhTW = {
   "name": "陸恩惠",
   "nameEn": "Aric",

@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { ContactArchive } from "@/components/contact/ContactArchive";
-import { getSite } from "@/lib/content";
-import { mapStringsDeep, toZhTW } from "@/lib/locale-sync";
+import { loadPublic } from "@/lib/site-io";
 
-export const metadata: Metadata = {
-  title: "联系方式",
-};
+export const dynamic = "force-dynamic";
 
-export default function ContactPage() {
-  const site = getSite();
-  return <ContactArchive site={site} siteTraditional={mapStringsDeep(site, toZhTW)} />;
+export async function generateMetadata(): Promise<Metadata> {
+  const { copy } = await loadPublic();
+  return { title: copy.contact.title };
+}
+
+export default async function ContactPage() {
+  const model = await loadPublic();
+  return (
+    <ContactArchive site={model.profile} siteTraditional={model.traditionalProfile} qrUrl={model.images.qrUrl} />
+  );
 }

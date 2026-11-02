@@ -14,13 +14,14 @@ function asText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function asTimeline(value: unknown): AboutContent["education"] {
+function asTimeline(value: unknown, prefix: string): AboutContent["education"] {
   if (!Array.isArray(value)) return [];
   return value
-    .map((item) => {
+    .map((item, index) => {
       const row =
         item && typeof item === "object" ? (item as Record<string, unknown>) : {};
       return {
+        id: asText(row.id) || `${prefix}-${index + 1}`,
         period: asText(row.period),
         title: asText(row.title),
         detail: asText(row.detail),
@@ -36,10 +37,12 @@ function normalizeAbout(raw: unknown): AboutContent {
     story: Array.isArray(source.story)
       ? source.story.map((item) => asText(item)).filter(Boolean)
       : [],
-    education: asTimeline(source.education),
-    career: asTimeline(source.career),
+    education: asTimeline(source.education, "edu"),
+    career: asTimeline(source.career, "job"),
     skills: Array.isArray(source.skills)
-      ? source.skills.map((item) => asText(item)).filter(Boolean)
+      ? source.skills
+          .map((item, index) => ({ id: `skill-${index + 1}`, text: asText(item) }))
+          .filter((item) => item.text)
       : [],
   };
 }
@@ -49,12 +52,16 @@ function normalizeSite(raw: unknown): SiteProfile {
     raw && typeof raw === "object" ? (raw as Partial<SiteProfile>) : {};
   const socials = Array.isArray(source.socials)
     ? source.socials
-        .map((item) => {
+        .map((item, index) => {
           const row =
             item && typeof item === "object"
               ? (item as Record<string, unknown>)
               : {};
-          return { label: asText(row.label), href: asText(row.href) };
+          return {
+            id: asText(row.id) || `social-${index + 1}`,
+            label: asText(row.label),
+            href: asText(row.href),
+          };
         })
         .filter((item) => item.href)
     : [];

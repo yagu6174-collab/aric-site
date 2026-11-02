@@ -1,9 +1,10 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { EditAnchor, editHit } from "@/components/edit/EditAnchor";
+import { useEditMode } from "@/components/edit/mode";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { Mark } from "@/components/layout/Mark";
 import { useI18n } from "@/i18n/provider";
@@ -11,64 +12,70 @@ import { cn } from "@/lib/utils";
 
 export function Header() {
   const { dict } = useI18n();
+  const edit = useEditMode();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const items = [
-    { href: "/", label: dict.nav.home },
-    { href: "/insights", label: dict.nav.insights },
-    { href: "/about", label: dict.nav.about },
-    { href: "/contact", label: dict.nav.contact },
+    { href: "/", label: dict.nav.home, page: "home" },
+    { href: "/insights", label: dict.nav.insights, page: "insights" },
+    { href: "/about", label: dict.nav.about, page: "about" },
+    { href: "/contact", label: dict.nav.contact, page: "contact" },
   ];
 
   useEffect(() => {
     setOpen(false);
-  }, [pathname]);
+  }, [pathname, edit?.page]);
 
   useEffect(() => {
+    if (edit) return;
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [open, edit]);
 
-  function active(href: string) {
+  function active(href: string, page: string) {
+    if (edit?.page) {
+      if (page === "insights") return edit.page === "insights" || edit.page === "reading";
+      return edit.page === page;
+    }
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
   return (
     <>
-      <a className="skip" href="#content">
+      <a href="#content" {...editHit(edit?.selected, "nav", "skip", edit?.onSelect)}>
         {dict.nav.skip}
       </a>
       <header className="site-header">
         <div className="shell header-bar">
-          <Link href="/" className="brand">
+          <EditAnchor href="/" id="brand" className="brand">
             <Mark />
             <span>
               <span className="brand-name">{dict.name}</span>
               <span className="brand-en">{dict.nameEn}</span>
             </span>
-          </Link>
+          </EditAnchor>
           <nav className="nav-desktop" aria-label="Primary">
             {items.map((item) => (
-              <Link
+              <EditAnchor
                 key={item.href}
                 href={item.href}
-                className={cn("nav-link", active(item.href) && "is-active")}
-                aria-current={active(item.href) ? "page" : undefined}
+                id="nav"
+                className={cn("nav-link", active(item.href, item.page) && "is-active")}
               >
                 {item.label}
-              </Link>
+              </EditAnchor>
             ))}
           </nav>
           <div className="header-tools">
             <LanguageSwitcher />
-            <Link href="/contact" className="btn-line header-cta">
+            <EditAnchor href="/contact" id="studio-contact" className="btn-line header-cta">
               {dict.studio.contact.title}
               <span aria-hidden>→</span>
-            </Link>
+            </EditAnchor>
             <button
               type="button"
               className="menu-btn"
@@ -84,15 +91,14 @@ export function Header() {
           <div className="nav-panel">
             <div className="shell">
               {items.map((item) => (
-                <Link
+                <EditAnchor
                   key={item.href}
                   href={item.href}
-                  className={cn(active(item.href) && "is-active")}
-                  aria-current={active(item.href) ? "page" : undefined}
-                  onClick={() => setOpen(false)}
+                  id="nav"
+                  className={cn(active(item.href, item.page) && "is-active")}
                 >
                   {item.label}
-                </Link>
+                </EditAnchor>
               ))}
             </div>
           </div>

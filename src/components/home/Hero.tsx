@@ -1,6 +1,8 @@
 "use client";
 
 import { QueueStrip } from "@/components/home/QueueStrip";
+import { editHit } from "@/components/edit/EditAnchor";
+import { useEditMode } from "@/components/edit/mode";
 import { useI18n } from "@/i18n/provider";
 
 function Arc() {
@@ -41,19 +43,22 @@ function Arc() {
 
 export function Hero() {
   const { dict } = useI18n();
+  const edit = useEditMode();
 
   return (
     <section className="hero">
       <div className="shell hero-inner">
         <div className="hero-copy">
           <span className="rule" aria-hidden />
-          <h1 className="hero-title">
-            {dict.home.heroLines.map((line) => (
-              <span key={line}>{line}</span>
+          <h1 {...editHit(edit?.selected, "hero", "hero-title", edit?.onSelect)}>
+            {dict.home.heroLines.map((line, index) => (
+              <span key={`${index}-${line}`}>{line}</span>
             ))}
           </h1>
-          <p className="hero-lead">{dict.home.heroSubtitle}</p>
-          <a className="text-link" href="#chapter">
+          <p {...editHit(edit?.selected, "hero-lead", "hero-lead", edit?.onSelect)}>
+            {dict.home.heroSubtitle}
+          </p>
+          <a href="#chapter" {...editHit(edit?.selected, "philosophy", "text-link", edit?.onSelect)}>
             {dict.home.philosophyTitle}
             <span aria-hidden>→</span>
           </a>

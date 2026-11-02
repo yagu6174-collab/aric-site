@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { InsightsBoard } from "@/components/insights/InsightsBoard";
-import { getInsightCopies } from "@/lib/content";
+import { loadPublic } from "@/lib/site-io";
 
-export const metadata: Metadata = {
-  title: "理财见解",
-};
+export const dynamic = "force-dynamic";
 
-export default function InsightsPage() {
-  return <InsightsBoard items={getInsightCopies()} />;
+export async function generateMetadata(): Promise<Metadata> {
+  const { copy } = await loadPublic();
+  return { title: copy.insights.title };
+}
+
+export default async function InsightsPage() {
+  const model = await loadPublic();
+  return <InsightsBoard items={model.insights} traditional={model.traditionalInsights} />;
 }

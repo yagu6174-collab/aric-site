@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { InsightArticle } from "@/components/insights/InsightArticle";
-import { getInsightCopy, getInsightCopies } from "@/lib/content";
+import { normalizeInsightSlug } from "@/lib/content";
+import { loadPublic } from "@/lib/site-io";
 
-export function generateStaticParams() {
-  return getInsightCopies().map((item) => ({ slug: item.simplified.slug }));
-}
-
-export const dynamicParams = false;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -15,8 +12,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = getInsightCopy(slug);
-  return { title: item?.simplified.title ?? "见解" };
+  const model = await loadPublic();
+  const item = model.insights.find((entry) => normalizeInsightSlug(entry.slug) === normalizeInsightSlug(slug));
+  return { title: item?.title ?? "见解" };
 }
 
 export default async function InsightPage({
@@ -25,7 +23,9 @@ export default async function InsightPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = getInsightCopy(slug);
+  const model = await loadPublic();
+  const item = model.insights.find((entry) => normalizeInsightSlug(entry.slug) === normalizeInsightSlug(slug));
   if (!item) notFound();
-  return <InsightArticle item={item} />;
+  const traditional = model.traditionalInsights.find((entry) => entry.id === item.id);
+  return <InsightArticle item={item} traditional={traditional} />;
 }

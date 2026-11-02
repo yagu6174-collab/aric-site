@@ -2,16 +2,19 @@
 
 个人理财顾问站。线上 https://aric-site.vercel.app ，仓库 yagu6174-collab/aric-site。
 
-技术：Next.js 15 App Router、Tailwind v4、静态导出（`output: 'export'`，产物 `out/`）。页面：`/`、`/insights`、`/insights/[slug]`、`/about`、`/contact`。
+技术：Next.js 15 App Router、Tailwind v4。公开页按请求读取一份简体草稿（Vercel Blob；本机没有令牌时用 `.data/`）。页面：`/`、`/insights`、`/insights/[slug]`、`/about`、`/contact`，后台 `/admin`。
 
-文案在仓库里，不在 Blob，也没有后台：
+文案以草稿为准，种子仍在仓库里：
 
-- 首页与界面：`src/i18n/dictionaries/`。繁体运行时由简体经 OpenCC 生成，见 `src/i18n/dictionaries/index.ts`
-- 介绍、联系、文章：`content/about.json`、`content/site.json`、`content/insights/`
-- 页脚免责声明：`src/components/layout/Footer.tsx` 与词典 `footer`
+- 简体种子：`src/i18n/dictionaries/zh-CN.ts`、`content/about.json`、`content/site.json`、`content/insights/`
+- 繁体由简体经 OpenCC 在运行时转出，不单独改 `zh-TW.ts`
+- 英文界面铬：`src/i18n/dictionaries/en.ts`，不进后台逐句编辑
+- 字段对照：`ADMIN_MAP.md`
 
-生产构建必须是 `next build`（webpack）。不要改回 `next build --turbopack`，也不要加回需要服务器的后台、登录或 Blob。
+后台要 `EDITOR_PASSWORD`（或 `ADMIN_PASSWORD`）、`SESSION_SECRET`。线上保存要 `BLOB_READ_WRITE_TOKEN`。
+
+不要改回 `output: 'export'`，否则 `/admin` 和读写接口没法工作。生产构建用 `next build`（不要加 `--turbopack`）。
 
 上线：只有用户明确说「上线」才把改动合并进 main。平时走分支。
 
-不要自行加功能、版块或文案。关于页的肖像是占位，不要编造成真实照片或履历。
+不要自行加功能、版块或文案。关于页的肖像是占位，不要编造成真实照片或履历。人物剪影留在首页。
