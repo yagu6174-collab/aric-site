@@ -21,7 +21,7 @@ export function mapStringsDeep<T>(value: T, map: (text: string) => string): T {
   return value;
 }
 
-export function insightToZhTW(item: Insight): Insight {
+export function insightToZhTW<T extends Pick<Insight, "title" | "excerpt" | "quote" | "body">>(item: T): T {
   return {
     ...item,
     title: toZhTW(item.title),

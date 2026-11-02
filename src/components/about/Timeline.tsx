@@ -1,20 +1,34 @@
+"use client";
+
 import type { AboutContent } from "@/types/site";
+import { EditAdd } from "@/components/edit/EditAdd";
+import { editHit } from "@/components/edit/EditAnchor";
+import { useEditMode } from "@/components/edit/mode";
 
 export function Timeline({
   title,
   items,
+  titleId,
+  itemPrefix,
+  addKind,
+  addLabel,
 }: {
   title: string;
   items: AboutContent["education"];
+  titleId: string;
+  itemPrefix: "edu" | "job";
+  addKind: "edu" | "job";
+  addLabel: string;
 }) {
-  if (!items.length) return null;
+  const edit = useEditMode();
+  if (!edit && !items.length) return null;
 
   return (
     <section className="block">
-      <h2>{title}</h2>
+      <h2 {...editHit(edit?.selected, titleId, undefined, edit?.onSelect)}>{title}</h2>
       <ol className="records">
         {items.map((item) => (
-          <li key={`${item.period}-${item.title}`}>
+          <li key={item.id} {...editHit(edit?.selected, `${itemPrefix}:${item.id}`, undefined, edit?.onSelect)}>
             <small>{item.period}</small>
             <div>
               <strong>{item.title}</strong>
@@ -23,6 +37,7 @@ export function Timeline({
           </li>
         ))}
       </ol>
+      <EditAdd kind={addKind} label={addLabel} />
     </section>
   );
 }

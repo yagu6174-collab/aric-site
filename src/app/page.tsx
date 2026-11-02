@@ -1,22 +1,9 @@
-import { Hero } from "@/components/home/Hero";
-import { LatestInsights } from "@/components/home/LatestInsights";
-import { PhilosophyBento } from "@/components/home/PhilosophyBento";
-import { StudioDirectory } from "@/components/home/StudioDirectory";
-import { getInsightCopies } from "@/lib/content";
+import { HomeView } from "@/components/home/HomeView";
+import { loadPublic } from "@/lib/site-io";
 
-export default function HomePage() {
-  const insights = getInsightCopies();
+export const dynamic = "force-dynamic";
 
-  return (
-    <>
-      <Hero />
-      <PhilosophyBento />
-      <section className="band">
-        <div className="shell band-grid">
-          <LatestInsights items={insights} />
-          <StudioDirectory />
-        </div>
-      </section>
-    </>
-  );
+export default async function HomePage() {
+  const model = await loadPublic();
+  return <HomeView insights={model.insights} traditional={model.traditionalInsights} />;
 }

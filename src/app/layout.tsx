@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
+import { SiteShell } from "@/components/layout/SiteShell";
 import { Providers } from "@/components/providers";
-import { getSite } from "@/lib/content";
-import { mapStringsDeep, toZhTW } from "@/lib/locale-sync";
+import { colorVars } from "@/lib/draft";
+import { loadPublic } from "@/lib/site-io";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -14,23 +13,26 @@ const display = Cormorant_Garamond({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "陆恩惠 Aric",
-    template: "%s · 陆恩惠 Aric",
-  },
-  description: "理财顾问，写一点自己的看法。",
-};
+export const dynamic = "force-dynamic";
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const { copy } = await loadPublic();
+  const title = `${copy.name} ${copy.nameEn}`.trim();
+  return {
+    title: { default: title, template: `%s · ${title}` },
+    description: copy.home.heroSubtitle,
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const site = getSite();
+  const model = await loadPublic();
 
   return (
-    <html lang="zh-CN" className={display.variable}>
+    <html lang="zh-CN" className={display.variable} style={colorVars(model.colors)}>
       <head>
         <link
           rel="preload"
@@ -48,12 +50,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen antialiased">
-        <Providers>
-          <Header />
-          <main id="content" className="site-main">
+        <Providers source={model.copy} traditional={model.traditionalCopy}>
+          <SiteShell profile={model.profile} profileTraditional={model.traditionalProfile}>
             {children}
-          </main>
-          <Footer site={site} siteTraditional={mapStringsDeep(site, toZhTW)} />
+          </SiteShell>
         </Providers>
       </body>
     </html>

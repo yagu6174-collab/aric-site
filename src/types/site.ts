@@ -1,10 +1,23 @@
+export type SocialLink = {
+  id: string;
+  label: string;
+  href: string;
+};
+
+export type TimelineEntry = {
+  id: string;
+  period: string;
+  title: string;
+  detail: string;
+};
+
 export type SiteProfile = {
   name: string;
   nameEn: string;
   wechat: string;
   email: string;
   city: string;
-  socials: { label: string; href: string }[];
+  socials: SocialLink[];
 };
 
 export type HomeContent = {
@@ -15,7 +28,7 @@ export type HomeContent = {
 
 export type AboutContent = {
   story: string[];
-  education: { period: string; title: string; detail: string }[];
-  career: { period: string; title: string; detail: string }[];
-  skills: string[];
+  education: TimelineEntry[];
+  career: TimelineEntry[];
+  skills: { id: string; text: string }[];
 };

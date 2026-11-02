@@ -1,11 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import type { ArticleBlock, InsightCopy } from "@/types/insight";
+import type { ArticleBlock } from "@/types/insight";
+import type { InsightDraft } from "@/lib/draft";
 import { ArticleBody } from "@/components/insights/ArticleBody";
 import { Disclaimer } from "@/components/insights/Disclaimer";
+import { EditAnchor } from "@/components/edit/EditAnchor";
+import { editHit } from "@/components/edit/EditAnchor";
+import { useEditMode } from "@/components/edit/mode";
 import { useI18n } from "@/i18n/provider";
-import { forLocale } from "@/lib/localize";
 import { formatDate, insightCharCount } from "@/lib/utils";
 
 function bodyOpensWith(body: ArticleBlock[], excerpt: string) {
@@ -15,27 +17,31 @@ function bodyOpensWith(body: ArticleBlock[], excerpt: string) {
   return first?.type === "p" && first.text.trim().startsWith(lead);
 }
 
-export function InsightArticle({ item }: { item: InsightCopy }) {
+export function InsightArticle({ item, traditional }: { item: InsightDraft; traditional?: InsightDraft }) {
   const { dict, locale } = useI18n();
-  const localized = forLocale(locale, item.simplified, item.traditional);
+  const edit = useEditMode();
+  const localized = locale === "zh-TW" && traditional ? traditional : item;
   const showExcerpt = !bodyOpensWith(localized.body, localized.excerpt);
   const lang = locale === "zh-TW" ? "zh-TW" : "zh-CN";
+  const hit = editHit(edit?.selected, `insight:${item.id}`, undefined, edit?.onSelect);
 
   return (
     <article className="page reading">
       <div className="shell reading-grid">
         <aside className="reading-rail">
-          <Link href="/insights" className="text-link">
+          <EditAnchor href="/insights" id="insights-copy" className="text-link">
             <span aria-hidden>←</span>
             {dict.insights.back}
-          </Link>
-          <time dateTime={localized.date}>{formatDate(localized.date, locale)}</time>
-          <span>{dict.insights.categories[localized.category]}</span>
-          <span>
-            {insightCharCount(item.simplified)} {dict.insights.charCount}
+          </EditAnchor>
+          <time dateTime={localized.date} {...hit}>
+            {formatDate(localized.date, locale)}
+          </time>
+          <span {...hit}>{dict.insights.categories[localized.category]}</span>
+          <span {...hit}>
+            {insightCharCount(item)} {dict.insights.charCount}
           </span>
         </aside>
-        <div lang={lang}>
+        <div lang={lang} {...hit}>
           <h1>{localized.title}</h1>
           {showExcerpt ? <p className="lede">{localized.excerpt}</p> : null}
           <ArticleBody body={localized.body} />
